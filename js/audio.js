@@ -25,8 +25,9 @@
 
         setupUnlock() {
             var self = this;
-            var events = ["touchstart", "touchend", "mousedown", "click"];
+            var events = ["touchstart", "touchend", "mousedown", "click", "keydown"];
             var done = false;
+
             var unlock = function() {
                 if (done) return;
                 done = true;
@@ -37,20 +38,27 @@
                     setTimeout(function() { self.synth.cancel(); }, 200);
                 } catch(e) {}
                 self.unlocked = true;
-                console.log("Audio unlocked");
+                console.log("Audio unlocked for mobile");
             };
+
             events.forEach(function(evt) {
                 document.addEventListener(evt, unlock, { once: true, passive: true });
             });
         }
 
         selectEnglishVoice() {
-            var preferred = ["Google US English", "Microsoft Zira - English (United States)", "Samantha", "Victoria"];
+            var preferred = [
+                "Google US English",
+                "Microsoft Zira - English (United States)",
+                "Samantha",
+                "Victoria"
+            ];
             for (var i = 0; i < preferred.length; i++) {
                 var voice = this.voices.find(function(v) { return v.name === preferred[i]; });
                 if (voice) { this.currentVoice = voice; return; }
             }
-            this.currentVoice = this.voices.find(function(v) { return v.lang === "en-US"; }) || this.voices.find(function(v) { return v.lang.startsWith("en"); });
+            this.currentVoice = this.voices.find(function(v) { return v.lang === "en-US"; }) ||
+                this.voices.find(function(v) { return v.lang.startsWith("en"); });
         }
 
         speak(text, rate, pitch) {
@@ -65,6 +73,7 @@
                 u.volume = 1;
                 u.lang = "en-US";
                 u.onerror = function(e) { console.warn("Speech error:", e); };
+                u.onstart = function() { console.log("Speaking:", text); };
                 self.synth.speak(u);
             }, 100);
         }

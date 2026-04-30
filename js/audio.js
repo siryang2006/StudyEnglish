@@ -12,10 +12,11 @@
         }
 
         init() {
+            var self = this;
             if (this.synth.onvoiceschanged !== undefined) {
-                this.synth.onvoiceschanged = () => {
-                    this.voices = this.synth.getVoices();
-                    this.selectEnglishVoice();
+                this.synth.onvoiceschanged = function() {
+                    self.voices = self.synth.getVoices();
+                    self.selectEnglishVoice();
                 };
             }
             this.voices = this.synth.getVoices();
@@ -28,7 +29,7 @@
             var events = ["touchstart", "touchend", "mousedown", "click", "keydown"];
             var done = false;
 
-            var unlock = function() {
+            function unlock() {
                 if (done) return;
                 done = true;
                 try {
@@ -39,7 +40,7 @@
                 } catch(e) {}
                 self.unlocked = true;
                 console.log("Audio unlocked for mobile");
-            };
+            }
 
             events.forEach(function(evt) {
                 document.addEventListener(evt, unlock, { once: true, passive: true });

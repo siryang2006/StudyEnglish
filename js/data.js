@@ -99,7 +99,10 @@ const wordCategories = {
             { word: 'tiger', chinese: '老虎', image: '🐯', imageSrc: 'assets/images/animals/tiger.png', phonetic: '/ˈtaɪɡə/' },
             { word: 'bear', chinese: '熊', image: '🐻', imageSrc: 'assets/images/animals/bear.png', phonetic: '/beə/' },
             { word: 'duck', chinese: '鸭子', image: '🦆', imageSrc: 'assets/images/animals/duck.png', phonetic: '/dʌk/' },
-            { word: 'pig', chinese: '猪', image: '🐷', imageSrc: 'assets/images/animals/pig.png', phonetic: '/pɪg/' }
+            { word: 'pig', chinese: '猪', image: '🐷', imageSrc: 'assets/images/animals/pig.png', phonetic: '/pɪg/' },
+            { word: 'horse', chinese: '马', image: '🐴', imageSrc: 'assets/images/animals/horse.png', phonetic: '/hɔ:s/' },
+            { word: 'cow', chinese: '牛', image: '🐄', imageSrc: 'assets/images/animals/cow.png', phonetic: '/kaʊ/' },
+            { word: 'sheep', chinese: '羊', image: '🐑', imageSrc: 'assets/images/animals/sheep.png', phonetic: '/ʃi:p/' }
         ]
     },
     food: {
@@ -129,7 +132,9 @@ const wordCategories = {
             { word: 'black', chinese: '黑色', image: '⚫', imageSrc: 'assets/images/colors/black.png', phonetic: '/blæk/' },
             { word: 'white', chinese: '白色', image: '⚪', imageSrc: 'assets/images/colors/white.png', phonetic: '/waɪt/' },
             { word: 'orange', chinese: '橙色', image: '🟠', imageSrc: 'assets/images/colors/orange.png', phonetic: '/ˈɒrɪndʒ/' },
-            { word: 'purple', chinese: '紫色', image: '🟣', imageSrc: 'assets/images/colors/purple.png', phonetic: '/ˈpɜ:pl/' }
+            { word: 'purple', chinese: '紫色', image: '🟣', imageSrc: 'assets/images/colors/purple.png', phonetic: '/ˈpɜːpl/' },
+            { word: 'pink', chinese: '粉色', image: '🩷', imageSrc: 'assets/images/colors/pink.png', phonetic: '/pɪŋk/' },
+            { word: 'brown', chinese: '棕色', image: '🟤', imageSrc: 'assets/images/colors/brown.png', phonetic: '/braʊn/' }
         ]
     },
     family: {
@@ -142,7 +147,11 @@ const wordCategories = {
             { word: 'sister', chinese: '姐妹', image: '👧', phonetic: '/ˈsɪstə/', imageSrc: 'assets/images/family/sister.png' },
             { word: 'baby', chinese: '宝宝', image: '👶', phonetic: '/ˈbeɪbi/', imageSrc: 'assets/images/family/baby.png' },
             { word: 'grandpa', chinese: '爷爷', image: '👴', phonetic: '/ˈɡrænpɑ:/', imageSrc: 'assets/images/family/grandpa.png' },
-            { word: 'grandma', chinese: '奶奶', image: '👵', phonetic: '/ˈɡrænmɑ:/', imageSrc: 'assets/images/family/grandma.png' }
+            { word: 'grandma', chinese: '奶奶', image: '👵', phonetic: '/ˈɡrænmɑ:/', imageSrc: 'assets/images/family/grandma.png' },
+            { word: 'son', chinese: '儿子', image: '👦', phonetic: '/sʌn/', imageSrc: 'assets/images/family/son.png' },
+            { word: 'daughter', chinese: '女儿', image: '👧', phonetic: '/ˈdɔ:tə/', imageSrc: 'assets/images/family/daughter.png' },
+            { word: 'husband', chinese: '丈夫', image: '👨', phonetic: '/ˈhʌzbənd/', imageSrc: 'assets/images/family/husband.png' },
+            { word: 'wife', chinese: '妻子', image: '👩', phonetic: '/waɪf/', imageSrc: 'assets/images/family/wife.png' }
         ]
     },
     body: {

@@ -275,6 +275,14 @@
                     <h2>🎮 选择游戏开始挑战！</h2>
                     <p>每个游戏都设计了丰富的互动元素，让学习更有趣！</p>
                 </div>
+                
+                <!-- 难度选择 -->
+                <div class="difficulty-selector">
+                    <button class="diff-btn active" data-level="easy" onclick="setDifficulty('easy', this)">简单</button>
+                    <button class="diff-btn" data-level="medium" onclick="setDifficulty('medium', this)">中等</button>
+                    <button class="diff-btn" data-level="hard" onclick="setDifficulty('hard', this)">困难</button>
+                </div>
+                
                 <div class="games-grid" id="gamesGrid"></div>
             </div>
 
@@ -381,6 +389,15 @@
             { name: '字母书写', icon: '✏️', desc: '练习写字母', difficulty: 2, badge: null, id: 'tracing' }
         ];
 
+        let currentDifficulty = 'easy';
+
+        function setDifficulty(level, btn) {
+            currentDifficulty = level;
+            document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderGames();
+        }
+
         // 初始化游戏列表
         function renderGames() {
             const grid = document.getElementById('gamesGrid');
@@ -451,13 +468,21 @@
         }
 
         // ========== 气球游戏逻辑 ==========
+        let balloonScore =0;
+        let balloonTimer = 60;
+        let balloonInterval = null;
+        let currentTarget = '';
+        let isBalloonActive = false;
+
         function initBalloonGame() {
+            // 根据难度调整时间
+            const timeMap = { easy: 90, medium: 60, hard: 40 };
             balloonScore = 0;
-            balloonTimer = 60;
+            balloonTimer = timeMap[currentDifficulty] || 60;
             isBalloonActive = true;
             
             document.getElementById('balloonScore').textContent = 0;
-            document.getElementById('balloonTimer').textContent = 60;
+            document.getElementById('balloonTimer').textContent = balloonTimer;
             
             generateBalloons();
             startBalloonTimer();
@@ -641,14 +666,44 @@
         }
 
         // ========= 拼图单词游戏 =========
-        let puzzleScore = 0;
+        let puzzleScore =0;
         let currentPuzzle = null;
         let puzzleAnswer = [];
 
         function initPuzzleGame() {
-            puzzleScore = 0;
-            document.getElementById('puzzleScore').textContent = 0;
-            loadPuzzle();
+            // 根据难度调整单词长度
+            const wordMap = {
+                easy: ['cat', 'dog', 'fish', 'bird', 'star'],
+                medium: ['apple', 'happy', 'table', 'water', 'music'],
+                hard: ['elephant', 'birthday', 'monkey', 'teacher', 'school']
+            };
+            const words = wordMap[currentDifficulty] || wordMap.easy;
+            
+            puzzleScore =0;
+            document.getElementById('puzzleScore').textContent =0;
+            loadPuzzle(words);
+        }
+
+        function loadPuzzle(words) {
+            currentPuzzle = words[Math.floor(Math.random() * words.length)];
+            document.getElementById('puzzleTarget').textContent = `拼出单词：${currentPuzzle}`;
+            document.getElementById('puzzleHint').textContent = `提示：\${currentPuzzle.length}个字母`;
+
+            // 打乱字母
+            const letters = currentPuzzle.split('').sort(() => Math.random() - 0.5);
+            const container = document.getElementById('puzzleLetters');
+            container.innerHTML = '';
+
+            letters.forEach((letter, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'puzzle-letter';
+                btn.textContent = letter.toUpperCase();
+                btn.onclick = () => selectPuzzleLetter(letter, btn);
+                container.appendChild(btn);
+            });
+
+            puzzleAnswer = [];
+            document.getElementById('puzzleAnswer').innerHTML = '';
         }
 
         function loadPuzzle() {
@@ -992,27 +1047,63 @@
             });
         }
 
-        // ========= 跟读练习游戏 =========
+        // ========= 跟读练习游戏（真实语音识别） =========
         let readScore = 0;
         let currentReadSentence = null;
-        let mediaRecorder = null;
-        let audioChunks = [];
+        let recognition = null;
         let isRecording = false;
 
         function initReadGame() {
             readScore = 0;
             document.getElementById('readScore').textContent = 0;
+
+            // 初始化语音识别
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'en-US';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onresult = function(event) {
+                    const userSpeech = event.results[0][0].transcript.trim();
+                    handleSpeechResult(userSpeech);
+                };
+
+                recognition.onerror = function(event) {
+                    console.warn('Speech recognition error:', event.error);
+                    if (event.error === 'not-allowed') {
+                        document.getElementById('readFeedback').textContent = '请允许麦克风权限，或刷新页面重试';
+                    } else {
+                        document.getElementById('readFeedback').textContent = '识别失败，请重试';
+                    }
+                    isRecording = false;
+                    document.getElementById('readRecordBtn').textContent = '🎙 开始跟读';
+                };
+
+                recognition.onend = function() {
+                    isRecording = false;
+                    document.getElementById('readRecordBtn').textContent = '🎙 开始跟读';
+                };
+            } else {
+                document.getElementById('readFeedback').textContent = '您的浏览器不支持语音识别，将使用模拟模式';
+            }
+
             loadReadSentence();
         }
 
         function loadReadSentence() {
             const sentences = [
-                'Hello! How are you?',
-                'I love my family.',
-                'The cat is cute.',
-                'We go to school.',
-                'She likes apples.',
-                'He is playing football.'
+                // 入门级（短句）
+                'Hello!', 'How are you?', 'I am happy.', 'This is a cat.',
+                'I like it.', 'She is nice.', 'He is tall.',
+                // 进阶级（中等长度）
+                'I love my family.', 'The cat is cute.', 'We go to school.',
+                'She likes apples.', 'He is playing football.',
+                'They are playing.', 'I have a book.',
+                // 高级（复杂句）
+                'The sun is shining brightly.', 'My mother likes cooking.',
+                'We are learning English.', 'Birds can fly high in sky.'
             ];
             currentReadSentence = sentences[Math.floor(Math.random() * sentences.length)];
             document.getElementById('readSentence').textContent = currentReadSentence;
@@ -1023,35 +1114,61 @@
         function startRecording() {
             if (isRecording) return;
 
+            // 先播放标准发音
             if (window.audioManager) {
                 window.audioManager.speakSentence(currentReadSentence);
             }
 
+            setTimeout(() => {
+                if (recognition) {
+                    // 真实语音识别模式
+                    try {
+                        recognition.start();
+                        isRecording = true;
+                        document.getElementById('readFeedback').textContent = '🎙 正在录音...请跟读：' + currentReadSentence;
+                        document.getElementById('readFeedback').style.color = 'red';
+                        document.getElementById('readRecordBtn').textContent = '🔴 录音中...';
+                    } catch (e) {
+                        console.warn('Recognition start failed:', e);
+                        simulateRecognition();
+                    }
+                } else {
+                    // 模拟模式
+                    simulateRecognition();
+                }
+            }, 1000); // 等发音播放完
+        }
+
+        function simulateRecognition() {
+            isRecording = true;
             document.getElementById('readFeedback').textContent = '🎙 正在录音...请跟读：' + currentReadSentence;
             document.getElementById('readFeedback').style.color = 'red';
             document.getElementById('readRecordBtn').textContent = '🔴 录音中...';
-            isRecording = true;
 
-            // 模拟录音（实际项目中可以用Web Speech API）
             setTimeout(() => {
-                stopRecording();
-            }, 3000);
+                handleSpeechResult(currentReadSentence); // 模拟成功
+            }, 2000);
         }
 
-        function stopRecording() {
+        function handleSpeechResult(userSpeech) {
             isRecording = false;
             document.getElementById('readRecordBtn').textContent = '🎙 开始跟读';
             document.getElementById('readFeedback').textContent = '⏳️ 评分中...';
 
-            // 模拟评分（实际使用语音识别）
             setTimeout(() => {
-                const score = Math.floor(Math.random() * 40) + 60; // 60-100分
+                // 计算相似度
+                const correct = currentReadSentence.toLowerCase().replace(/[?.!]/g, '');
+                const user = userSpeech.toLowerCase().replace(/[?.!]/g, '');
+                const similarity = calculateSimilarity(correct, user);
+
+                const score = Math.floor(similarity * 40) + 60; // 60-100分
                 const stars = score >= 90 ? '⭐⭐⭐' : score >= 70 ? '⭐⭐' : '⭐';
 
                 readScore += Math.floor(score / 10);
                 document.getElementById('readScore').textContent = readScore;
 
-                document.getElementById('readFeedback').innerHTML = `得分：${score}分 ${stars}<br>跟读句子：${currentReadSentence}`;
+                const feedback = `🎤 你说的是："${userSpeech}"<br>得分：${score}分 ${stars}<br>正确句子：${currentReadSentence}`;
+                document.getElementById('readFeedback').innerHTML = feedback;
                 document.getElementById('readFeedback').style.color = score >= 70 ? 'green' : 'orange';
 
                 if (window.audioManager) {
@@ -1062,8 +1179,24 @@
                     }
                 }
 
-                setTimeout(() => loadReadSentence(), 2000);
+                if (window.celebration && score >= 90) {
+                    window.celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+                }
+
+                setTimeout(() => loadReadSentence(), 3000);
             }, 1000);
+        }
+
+        function calculateSimilarity(str1, str2) {
+            const words1 = str1.split(' ');
+            const words2 = str2.split(' ');
+            let matchCount = 0;
+
+            words1.forEach(word => {
+                if (words2.includes(word)) matchCount++;
+            });
+
+            return matchCount / Math.max(words1.length, words2.length);
         }
 
         // 更新星星显示

@@ -666,3 +666,34 @@
     margin: 20px 0;
     min-height: 30px;
 }
+
+/* 难度选择器 */
+.difficulty-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.diff-btn {
+    padding: 12px 25px;
+    border: 3px solid var(--primary-color);
+    border-radius: 25px;
+    background: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: var(--text-dark);
+}
+
+.diff-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.diff-btn.active {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(108, 99, 255, 0.4);
+}

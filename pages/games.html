@@ -329,6 +329,31 @@
                 <div class="match-feedback" id="matchFeedback"></div>
                 <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
             </div>
+
+            <!-- 句子组合游戏 -->
+            <div class="sentence-game" id="sentenceGame" style="display: none;">
+                <div class="game-header">
+                    <h3>📝 句子组合</h3>
+                    <div class="sentence-score">分数: <span id="sentenceScore">0</span></div>
+                </div>
+                <div class="sentence-target" id="sentenceTarget"></div>
+                <div class="sentence-words" id="sentenceWords"></div>
+                <div class="sentence-answer" id="sentenceAnswer"></div>
+                <div class="sentence-hint" id="sentenceHint"></div>
+                <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
+            </div>
+
+            <!-- 跟读练习游戏 -->
+            <div class="read-game" id="readGame" style="display: none;">
+                <div class="game-header">
+                    <h3>🎤 跟读练习</h3>
+                    <div class="read-score">分数: <span id="readScore">0</span></div>
+                </div>
+                <div class="read-sentence" id="readSentence"></div>
+                <button class="read-record-btn" id="readRecordBtn" onclick="startRecording()">🎙 开始跟读</button>
+                <div class="read-feedback" id="readFeedback"></div>
+                <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
+            </div>
         </main>
     </div>
 
@@ -872,6 +897,175 @@
             }
         }
 
+        // ========= 句子组合游戏 =========
+        let sentenceScore = 0;
+        let currentSentence = null;
+        let sentenceWords = [];
+        let selectedWords = [];
+
+        function initSentenceGame() {
+            sentenceScore = 0;
+            document.getElementById('sentenceScore').textContent = 0;
+            loadSentence();
+        }
+
+        function loadSentence() {
+            const sentences = [
+                { en: 'I love my family.', zh: '我爱我的家人。' },
+                { en: 'The cat is cute.', zh: '这只猫很可爱。' },
+                { en: 'We go to school.', zh: '我们去上学。' },
+                { en: 'She likes apples.', zh: '她喜欢苹果。' },
+                { en: 'He is playing football.', zh: '他正在踢足球。' },
+                { en: 'They are happy.', zh: '他们很开心。' },
+                { en: 'This is a book.', zh: '这是一本书。' },
+                { en: 'I like English.', zh: '我喜欢英语。' }
+            ];
+            currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
+
+            // 拆分单词并打乱
+            sentenceWords = currentSentence.en.slice(0, -1).split(' ');
+            const shuffled = [...sentenceWords].sort(() => Math.random() - 0.5);
+
+            document.getElementById('sentenceTarget').textContent = `中文：${currentSentence.zh}`;
+            document.getElementById('sentenceHint').textContent = `提示：${sentenceWords.length}个单词`;
+
+            const container = document.getElementById('sentenceWords');
+            container.innerHTML = '';
+            selectedWords = [];
+
+            shuffled.forEach((word, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'sentence-word';
+                btn.textContent = word;
+                btn.dataset.index = index;
+                btn.onclick = () => selectSentenceWord(word, btn);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('sentenceAnswer').innerHTML = '';
+        }
+
+        function selectSentenceWord(word, btn) {
+            if (btn.classList.contains('used')) return;
+
+            selectedWords.push(word);
+            btn.classList.add('used');
+            btn.style.opacity = '0.5';
+
+            const answerDiv = document.getElementById('sentenceAnswer');
+            const span = document.createElement('span');
+            span.className = 'sentence-answer-word';
+            span.textContent = word + ' ';
+            answerDiv.appendChild(span);
+
+            if (selectedWords.length === sentenceWords.length) {
+                checkSentenceAnswer();
+            }
+        }
+
+        function checkSentenceAnswer() {
+            const userSentence = selectedWords.join(' ') + '.';
+            const correctSentence = currentSentence.en;
+
+            if (userSentence === correctSentence) {
+                sentenceScore += 20;
+                document.getElementById('sentenceScore').textContent = sentenceScore;
+                if (window.audioManager) window.audioManager.playSuccessSound();
+                if (window.celebration) window.celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+                setTimeout(() => {
+                    alert('太棒了！句子正确！');
+                    loadSentence();
+                }, 500);
+            } else {
+                if (window.audioManager) window.audioManager.playErrorSound();
+                alert('不对哦，再试试！\n正确句子：' + correctSentence);
+                resetSentenceGame();
+            }
+        }
+
+        function resetSentenceGame() {
+            selectedWords = [];
+            document.getElementById('sentenceAnswer').innerHTML = '';
+            document.querySelectorAll('.sentence-word').forEach(btn => {
+                btn.classList.remove('used');
+                btn.style.opacity = '1';
+            });
+        }
+
+        // ========= 跟读练习游戏 =========
+        let readScore = 0;
+        let currentReadSentence = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+
+        function initReadGame() {
+            readScore = 0;
+            document.getElementById('readScore').textContent = 0;
+            loadReadSentence();
+        }
+
+        function loadReadSentence() {
+            const sentences = [
+                'Hello! How are you?',
+                'I love my family.',
+                'The cat is cute.',
+                'We go to school.',
+                'She likes apples.',
+                'He is playing football.'
+            ];
+            currentReadSentence = sentences[Math.floor(Math.random() * sentences.length)];
+            document.getElementById('readSentence').textContent = currentReadSentence;
+            document.getElementById('readFeedback').textContent = '点击"开始跟读"按钮，然后跟读上面的句子';
+            document.getElementById('readFeedback').style.color = 'var(--text-light)';
+        }
+
+        function startRecording() {
+            if (isRecording) return;
+
+            if (window.audioManager) {
+                window.audioManager.speakSentence(currentReadSentence);
+            }
+
+            document.getElementById('readFeedback').textContent = '🎙 正在录音...请跟读：' + currentReadSentence;
+            document.getElementById('readFeedback').style.color = 'red';
+            document.getElementById('readRecordBtn').textContent = '🔴 录音中...';
+            isRecording = true;
+
+            // 模拟录音（实际项目中可以用Web Speech API）
+            setTimeout(() => {
+                stopRecording();
+            }, 3000);
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            document.getElementById('readRecordBtn').textContent = '🎙 开始跟读';
+            document.getElementById('readFeedback').textContent = '⏳️ 评分中...';
+
+            // 模拟评分（实际使用语音识别）
+            setTimeout(() => {
+                const score = Math.floor(Math.random() * 40) + 60; // 60-100分
+                const stars = score >= 90 ? '⭐⭐⭐' : score >= 70 ? '⭐⭐' : '⭐';
+
+                readScore += Math.floor(score / 10);
+                document.getElementById('readScore').textContent = readScore;
+
+                document.getElementById('readFeedback').innerHTML = `得分：${score}分 ${stars}<br>跟读句子：${currentReadSentence}`;
+                document.getElementById('readFeedback').style.color = score >= 70 ? 'green' : 'orange';
+
+                if (window.audioManager) {
+                    if (score >= 70) {
+                        window.audioManager.playSuccessSound();
+                    } else {
+                        window.audioManager.playErrorSound();
+                    }
+                }
+
+                setTimeout(() => loadReadSentence(), 2000);
+            }, 1000);
+        }
+
         // 更新星星显示
         function updateStarDisplay() {
             const starCount = document.getElementById('starCount');
@@ -885,18 +1079,16 @@
             renderGames();
             updateStarDisplay();
         });
+
+        // 注册 Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swPath = location.pathname.includes('/pages/') ? '../sw.js' : './sw.js';
+                navigator.serviceWorker.register(swPath)
+                    .then(reg => console.log('SW registered:', reg))
+                    .catch(err => console.log('SW failed:', err));
+            });
+        }
     </script>
-
-
-    // 注册 Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            const swPath = location.pathname.includes('/pages/') ? '../sw.js' : './sw.js';
-            navigator.serviceWorker.register(swPath)
-                .then(reg => console.log('SW registered:', reg))
-                .catch(err => console.log('SW failed:', err));
-        });
-    }
-
 </body>
 </html>

@@ -546,3 +546,123 @@
     margin: 20px 0;
     min-height: 30px;
 }
+
+/* 句子组合游戏 */
+.sentence-game {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-card);
+    text-align: center;
+}
+
+.sentence-target {
+    font-size: 24px;
+    color: var(--text-dark);
+    margin: 20px 0;
+    font-weight: bold;
+    background: #f0f8ff;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.sentence-words {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.sentence-word {
+    padding: 12px 20px;
+    border: 3px solid var(--primary-color);
+    border-radius: 12px;
+    background: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: var(--text-dark);
+}
+
+.sentence-word:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+}
+
+.sentence-word.used {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.sentence-answer {
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 12px;
+}
+
+.sentence-answer-word {
+    padding: 8px 15px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.sentence-hint {
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+/* 跟读练习游戏 */
+.read-game {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-card);
+    text-align: center;
+}
+
+.read-sentence {
+    font-size: 28px;
+    color: var(--text-dark);
+    margin: 30px 0;
+    font-weight: bold;
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding: 20px;
+}
+
+.read-record-btn {
+    padding: 20px 40px;
+    font-size: 20px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, var(--success-color), #43e97b);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 20px 0;
+}
+
+.read-record-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 210, 160, 0.4);
+}
+
+.read-feedback {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+    min-height: 30px;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音标学习 - KidsEnglish Fun</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/phonetics.css">
+</head>
+<body>
+    <div id="app">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">🎵</span>
+                <h1>音标学习</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content phonetics-container">
+            <button class="back-btn" onclick="navigateTo('../index.html')">
+                ← 返回首页
+            </button>
+
+            <div class="phonetics-header">
+                <h2>国际音标学习</h2>
+                <p>点击音标听发音，掌握标准英语发音</p>
+            </div>
+
+            <div class="phonetics-tabs">
+                <button class="tab-btn active" data-tab="vowels">元音 (20)</button>
+                <button class="tab-btn" data-tab="consonants">辅音 (28)</button>
+                <button class="tab-btn" data-tab="game">音标游戏</button>
+            </div>
+
+            <!-- 元音区域 -->
+            <div id="vowels-panel" class="phonetics-panel active">
+                <div class="phonetics-grid" id="vowelsGrid">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+
+            <!-- 辅音区域 -->
+            <div id="consonants-panel" class="phonetics-panel" style="display:none;">
+                <div class="phonetics-grid" id="consonantsGrid">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+
+            <!-- 音标游戏区域 -->
+            <div id="game-panel" class="phonetics-panel" style="display:none;">
+                <div class="phonetic-game">
+                    <div class="game-question" id="gameQuestion">听音选音标</div>
+                    <div class="game-options" id="gameOptions">
+                        <!-- 动态生成 -->
+                    </div>
+                    <div id="gameResult"></div>
+                    <button class="tab-btn" onclick="startPhoneticGame()" style="margin-top:20px;">
+                        开始游戏
+                    </button>
+                </div>
+            </div>
+
+            <!-- 音标详情 -->
+            <div class="phonetic-detail" id="phoneticDetail">
+                <!-- 动态生成 -->
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/audio.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/phonetics.js"></script>
+    <script src="../js/app.js"></script>
+</body>
+</html>

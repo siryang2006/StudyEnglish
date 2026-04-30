@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidsEnglish Fun - 儿童英语学习</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/games.css">
+    <link rel="stylesheet" href="css/phonetics.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 顶部导航 -->
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">🎓</span>
+                <h1>KidsEnglish Fun</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主菜单 -->
+        <main class="main-content">
+            <div class="welcome-section">
+                <h2 class="bounce-in">欢迎来到英语乐园！</h2>
+                <p class="fade-in">点击下面的模块开始学习吧</p>
+            </div>
+
+            <div class="menu-grid">
+                <!-- 字母学习 -->
+                <div class="menu-card card-alphabet" onclick="navigateTo('pages/alphabet.html')">
+                    <div class="card-icon">🔤</div>
+                    <h3>字母乐园</h3>
+                    <p>学习26个字母</p>
+                    <div class="card-badge">热门</div>
+                </div>
+
+                <!-- 音标学习 -->
+                <div class="menu-card card-phonetics" onclick="navigateTo('pages/phonetics.html')">
+                    <div class="card-icon">🎵</div>
+                    <h3>音标学习</h3>
+                    <p>48个国际音标</p>
+                    <div class="card-badge new">NEW</div>
+                </div>
+
+                <!-- 单词卡片 -->
+                <div class="menu-card card-words" onclick="navigateTo('pages/words.html')">
+                    <div class="card-icon">📚</div>
+                    <h3>单词卡片</h3>
+                    <p>分类记忆单词</p>
+                </div>
+
+                <!-- 语法学习 -->
+                <div class="menu-card card-grammar" onclick="navigateTo('pages/grammar.html')">
+                    <div class="card-icon">✨</div>
+                    <h3>语法学习</h3>
+                    <p>Be动词、时态</p>
+                    <div class="card-badge">NEW</div>
+                </div>
+
+                <!-- 互动游戏 -->
+                <div class="menu-card card-games" onclick="navigateTo('pages/games.html')">
+                    <div class="card-icon">🎮</div>
+                    <h3>互动游戏</h3>
+                    <p>边玩边学</p>
+                    <div class="card-badge">5+游戏</div>
+                </div>
+
+                <!-- 学习进度 -->
+                <div class="menu-card card-progress" onclick="navigateTo('pages/progress.html')">
+                    <div class="card-icon">📊</div>
+                    <h3>我的进度</h3>
+                    <p>查看学习成果</p>
+                </div>
+            </div>
+
+            <!-- 每日一句 -->
+            <div class="daily-sentence" style="margin-top: 40px; text-align: center; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h3 style="color: var(--primary-color); margin-bottom: 15px;">📅 每日一句</h3>
+                <div id="dailySentence" style="font-size: 24px; color: var(--text-dark); margin: 20px 0; cursor: pointer;" onclick="audioManager.speakSentence(this.textContent)">
+                    Loading...
+                </div>
+                <div id="dailyChinese" style="color: var(--text-light); font-size: 18px;"></div>
+            </div>
+        </main>
+
+        <!-- 底部导航 -->
+        <footer class="main-footer">
+            <p>Made with ❤️ for kids | 静态部署到 GitHub Pages</p>
+        </footer>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // 每日一句
+        const dailySentences = [
+            { en: "Hello! How are you?", zh: "你好！你好吗？" },
+            { en: "I love my family.", zh: "我爱我的家人。" },
+            { en: "The cat is cute.", zh: "这只猫很可爱。" },
+            { en: "We go to school.", zh: "我们去上学。" },
+            { en: "She likes apples.", zh: "她喜欢苹果。" },
+            { en: "He is playing football.", zh: "他正在踢足球。" },
+            { en: "They are happy.", zh: "他们很开心。" }
+        ];
+
+        // 根据日期选择句子
+        function getDailySentence() {
+            const today = new Date();
+            const index = today.getDate() % dailySentences.length;
+            return dailySentences[index];
+        }
+
+        // 显示每日一句
+        document.addEventListener('DOMContentLoaded', () => {
+            const sentence = getDailySentence();
+            document.getElementById('dailySentence').textContent = sentence.en;
+            document.getElementById('dailyChinese').textContent = sentence.zh;
+            updateStarDisplay();
+        });
+
+        function updateStarDisplay() {
+            const starCount = document.getElementById('starCount');
+            if (starCount && storage) {
+                starCount.textContent = storage.data.stars;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>句子练习 - KidsEnglish Fun</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <style>
+        .sentences-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .sentence-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        .sentence-image {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .sentence-en {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .sentence-en:hover {
+            transform: scale(1.05);
+            color: var(--secondary-color);
+        }
+        
+        .sentence-zh {
+            font-size: 24px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+        
+        .sentence-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn-speak {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .btn-next {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-prev {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        .level-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .level-tab {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background: white;
+            color: var(--text-dark);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .level-tab.active {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .level-tab:hover {
+            transform: translateY(-3px);
+        }
+        
+        .progress-info {
+            text-align: center;
+            color: var(--text-light);
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">📝</span>
+                <h1>句子练习</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content sentences-container">
+            <button class="back-btn" onclick="navigateTo('../index.html')">
+                ← 返回首页
+            </button>
+
+            <div class="level-tabs" id="levelTabs">
+                <!-- 动态生成 -->
+            </div>
+
+            <div class="sentence-card" id="sentenceCard">
+                <div class="sentence-image" id="sentenceImage">👋</div>
+                <div class="sentence-en" id="sentenceEn" onclick="speakSentence()">Hello!</div>
+                <div class="sentence-zh" id="sentenceZh">你好！</div>
+                
+                <div class="sentence-controls">
+                    <button class="control-btn btn-prev" onclick="prevSentence()">← 上一句</button>
+                    <button class="control-btn btn-speak" onclick="speakSentence()">🔊 发音</button>
+                    <button class="control-btn btn-next" onclick="nextSentence()">下一句 →</button>
+                </div>
+                
+                <div class="progress-info" id="progressInfo">1 / 5</div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/audio.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        let currentLevel = 'beginner';
+        let currentIndex = 0;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            renderLevelTabs();
+            loadSentence();
+            updateStarDisplay();
+        });
+
+        // 渲染难度标签
+        function renderLevelTabs() {
+            const container = document.getElementById('levelTabs');
+            if (!container) return;
+
+            Object.keys(sentenceData).forEach(key => {
+                const level = sentenceData[key];
+                const tab = document.createElement('button');
+                tab.className = 'level-tab' + (key === currentLevel ? ' active' : '');
+                tab.textContent = level.name;
+                tab.onclick = () => switchLevel(key);
+                container.appendChild(tab);
+            });
+        }
+
+        // 切换难度
+        function switchLevel(level) {
+            currentLevel = level;
+            currentIndex = 0;
+            
+            // 更新标签状态
+            document.querySelectorAll('.level-tab').forEach((tab, index) => {
+                const keys = Object.keys(sentenceData);
+                tab.classList.toggle('active', keys[index] === level);
+            });
+            
+            loadSentence();
+        }
+
+        // 加载句子
+        function loadSentence() {
+            const level = sentenceData[currentLevel];
+            const sentence = level.sentences[currentIndex];
+            
+            document.getElementById('sentenceImage').textContent = sentence.image;
+            document.getElementById('sentenceEn').textContent = sentence.en;
+            document.getElementById('sentenceZh').textContent = sentence.zh;
+            document.getElementById('progressInfo').textContent = `${currentIndex + 1} / ${level.sentences.length}`;
+            
+            // 自动发音
+            setTimeout(() => {
+                audioManager.speakSentence(sentence.en);
+            }, 300);
+        }
+
+        // 发音
+        function speakSentence() {
+            const level = sentenceData[currentLevel];
+            const sentence = level.sentences[currentIndex];
+            audioManager.speakSentence(sentence.en);
+        }
+
+        // 上一句
+        function prevSentence() {
+            const level = sentenceData[currentLevel];
+            currentIndex = (currentIndex - 1 + level.sentences.length) % level.sentences.length;
+            loadSentence();
+        }
+
+        // 下一句
+        function nextSentence() {
+            const level = sentenceData[currentLevel];
+            currentIndex = (currentIndex + 1) % level.sentences.length;
+            loadSentence();
+            
+            // 添加星星
+            storage.addStars(2);
+            updateStarDisplay();
+        }
+
+        // 更新星星显示
+        function updateStarDisplay() {
+            const starCount = document.getElementById('starCount');
+            if (starCount && storage) {
+                starCount.textContent = storage.data.stars;
+            }
+        }
+    </script>
+</body>
+</html>

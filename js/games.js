@@ -1,4 +1,4 @@
-// 游戏引擎 - 包含气球游戏、拼图游戏等
+// 游戏引擎 - 修复气球游戏
 
 // ========== 气球游戏引擎 ==========
 class BalloonGame {
@@ -14,8 +14,7 @@ class BalloonGame {
     init() {
         this.container = document.getElementById('balloonsContainer');
         if (!this.container) {
-            // 如果不在游戏页面，创建容器
-            this.createBalloonContainer();
+            console.error('Balloons container not found!');
             return;
         }
         
@@ -23,44 +22,18 @@ class BalloonGame {
         this.timer = 60;
         this.isActive = true;
         
-        document.getElementById('balloonScore').textContent = 0;
-        document.getElementById('balloonTimer').textContent = 60;
+        const scoreElem = document.getElementById('balloonScore');
+        if (scoreElem) scoreElem.textContent = 0;
         
-        this.generateBalloons();
-        this.startTimer();
-    }
-
-    createBalloonContainer() {
-        const gameArea = document.getElementById('balloonGame');
-        if (!gameArea) return;
-        
-        gameArea.innerHTML = `
-            <div class="game-header">
-                <h3>🎈 气球单词</h3>
-                <div class="game-score">分数: <span id="balloonScore">0</span></div>
-                <div class="game-timer">时间: <span id="balloonTimer">60</span>s</div>
-            </div>
-            <p style="text-align: center; margin-bottom: 15px; color: var(--text-light);">
-                点击正确的单词气球！目标：<span id="balloonTarget">cat</span>
-            </p>
-            <div class="balloons-container" id="balloonsContainer"></div>
-            <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
-        `;
-        
-        this.container = document.getElementById('balloonsContainer');
-        this.score = 0;
-        this.timer = 60;
-        this.isActive = true;
-        
-        document.getElementById('balloonScore').textContent = 0;
-        document.getElementById('balloonTimer').textContent = 60;
+        const timerElem = document.getElementById('balloonTimer');
+        if (timerElem) timerElem.textContent = 60;
         
         this.generateBalloons();
         this.startTimer();
     }
 
     generateBalloons() {
-        if (!this.container) return;
+        if (!this.container || !this.isActive) return;
         this.container.innerHTML = '';
         
         const words = ['cat', 'dog', 'bird', 'fish', 'book', 'ball', 'tree', 'sun', 'moon', 'star'];
@@ -92,25 +65,33 @@ class BalloonGame {
             balloon.style.animationDelay = `${index * 0.2}s`;
             
             // 点击事件
-            balloon.onclick = (e) => this.popBalloon(balloon, word, e);
+            balloon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.popBalloon(balloon, word);
+            });
             
             this.container.appendChild(balloon);
         });
     }
 
-    popBalloon(balloon, word, event) {
-        if (!this.isActive) return;
+    popBalloon(balloon, word) {
+        if (!this.isActive || balloon.classList.contains('popping')) return;
         
         const rect = balloon.getBoundingClientRect();
         const containerRect = this.container.getBoundingClientRect();
         const x = rect.left - containerRect.left + rect.width / 2;
         const y = rect.top - containerRect.top + rect.height / 2;
         
+        // 标记为正在爆炸，防止重复点击
+        balloon.classList.add('popping');
+        
         if (word === this.currentTarget) {
             // 正确气球 - 超级爆炸效果
             this.createExplosion(x, y, balloon.style.background);
             this.score += 10;
-            document.getElementById('balloonScore').textContent = this.score;
+            
+            const scoreElem = document.getElementById('balloonScore');
+            if (scoreElem) scoreElem.textContent = this.score;
             
             // 播放成功音效
             if (window.audioManager) {
@@ -119,7 +100,8 @@ class BalloonGame {
             
             // 移除气球并生成新的一轮
             setTimeout(() => {
-                this.generateBalloons();
+                if (balloon.parentNode) balloon.remove();
+                if (this.isActive) this.generateBalloons();
             }, 500);
         } else {
             // 错误气球 - 摇晃效果
@@ -129,17 +111,14 @@ class BalloonGame {
             }
             setTimeout(() => {
                 balloon.classList.remove('shake');
+                balloon.classList.remove('popping');
             }, 500);
         }
-        
-        // 气球破裂动画
-        balloon.classList.add('popping');
-        setTimeout(() => {
-            balloon.remove();
-        }, 400);
     }
 
     createExplosion(x, y, color) {
+        if (!this.container) return;
+        
         // 1. 闪光效果
         const flash = document.createElement('div');
         flash.className = 'explosion-flash';
@@ -226,6 +205,11 @@ class BalloonGame {
         if (this.interval) clearInterval(this.interval);
         
         this.interval = setInterval(() => {
+            if (!this.isActive) {
+                this.stop();
+                return;
+            }
+            
             this.timer--;
             const timerElem = document.getElementById('balloonTimer');
             if (timerElem) timerElem.textContent = this.timer;
@@ -269,8 +253,6 @@ class BalloonGame {
 class PuzzleGame {
     constructor() {
         this.currentWord = null;
-        this.letters = [];
-        this.blanks = [];
     }
 
     init() {
@@ -322,6 +304,10 @@ class PuzzleGame {
         
         const wordElem = document.getElementById('puzzleWord');
         if (wordElem) wordElem.textContent = this.currentWord.word;
+        
+        // 重置分数显示
+        const scoreElem = document.getElementById('puzzleScore');
+        if (scoreElem) scoreElem.textContent = '0/5';
     }
 
     selectLetter(letterDiv) {
@@ -354,6 +340,10 @@ class PuzzleGame {
             if (window.storage) {
                 window.storage.addStars(10);
             }
+            
+            // 更新分数显示
+            const scoreElem = document.getElementById('puzzleScore');
+            if (scoreElem) scoreElem.textContent = '1/5';
             
             // 重置游戏
             setTimeout(() => this.init(), 1000);

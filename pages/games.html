@@ -293,6 +293,42 @@
                 <div class="balloons-container" id="balloonsContainer"></div>
                 <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
             </div>
+
+            <!-- 拼图单词游戏 -->
+            <div class="puzzle-game" id="puzzleGame" style="display: none;">
+                <div class="game-header">
+                    <h3>🧩 拼图单词</h3>
+                    <div class="puzzle-score">分数: <span id="puzzleScore">0</span></div>
+                </div>
+                <div class="puzzle-target" id="puzzleTarget"></div>
+                <div class="puzzle-letters" id="puzzleLetters"></div>
+                <div class="puzzle-answer" id="puzzleAnswer"></div>
+                <div class="puzzle-hint" id="puzzleHint"></div>
+                <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
+            </div>
+
+            <!-- 听力选择游戏 -->
+            <div class="listen-game" id="listenGame" style="display: none;">
+                <div class="game-header">
+                    <h3>👂 听力选择</h3>
+                    <div class="listen-score">分数: <span id="listenScore">0</span></div>
+                </div>
+                <button class="listen-play-btn" id="listenPlayBtn" onclick="playListenWord()">🔊 播放发音</button>
+                <div class="listen-options" id="listenOptions"></div>
+                <div class="listen-feedback" id="listenFeedback"></div>
+                <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
+            </div>
+
+            <!-- 单词消消乐游戏 -->
+            <div class="match-game" id="matchGame" style="display: none;">
+                <div class="game-header">
+                    <h3>✨ 单词消消乐</h3>
+                    <div class="match-score">分数: <span id="matchScore">0</span></div>
+                </div>
+                <div class="match-grid" id="matchGrid"></div>
+                <div class="match-feedback" id="matchFeedback"></div>
+                <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
+            </div>
         </main>
     </div>
 
@@ -349,7 +385,7 @@
 
         function startGame(gameId) {
             document.getElementById('gamesList').style.display = 'none';
-            document.querySelectorAll('.balloon-game, .listen-game, .match-game, .read-game, .sentence-game').forEach(g => {
+            document.querySelectorAll('.balloon-game, .listen-game, .match-game, .puzzle-game, .read-game, .sentence-game').forEach(g => {
                 g.style.display = 'none';
                 g.classList.remove('active');
             });
@@ -358,6 +394,18 @@
                 document.getElementById('balloonGame').style.display = 'block';
                 document.getElementById('balloonGame').classList.add('active');
                 initBalloonGame();
+            } else if (gameId === 'puzzle') {
+                document.getElementById('puzzleGame').style.display = 'block';
+                document.getElementById('puzzleGame').classList.add('active');
+                initPuzzleGame();
+            } else if (gameId === 'listen') {
+                document.getElementById('listenGame').style.display = 'block';
+                document.getElementById('listenGame').classList.add('active');
+                initListenGame();
+            } else if (gameId === 'match') {
+                document.getElementById('matchGame').style.display = 'block';
+                document.getElementById('matchGame').classList.add('active');
+                initMatchGame();
             } else if (gameId === 'wordbook') {
                 window.location.href = 'wordbook.html';
             } else if (gameId === 'tracing') {
@@ -565,6 +613,263 @@
         function getRandomColor() {
             const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96E6A1', '#DDA0DD', '#FFD93D'];
             return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // ========= 拼图单词游戏 =========
+        let puzzleScore = 0;
+        let currentPuzzle = null;
+        let puzzleAnswer = [];
+
+        function initPuzzleGame() {
+            puzzleScore = 0;
+            document.getElementById('puzzleScore').textContent = 0;
+            loadPuzzle();
+        }
+
+        function loadPuzzle() {
+            const words = ['cat', 'dog', 'bird', 'fish', 'ball', 'tree', 'star', 'moon'];
+            currentPuzzle = words[Math.floor(Math.random() * words.length)];
+            document.getElementById('puzzleTarget').textContent = `拼出单词：${currentPuzzle}`;
+            document.getElementById('puzzleHint').textContent = `提示：\${currentPuzzle.length}个字母`;
+
+            // 打乱字母
+            const letters = currentPuzzle.split('').sort(() => Math.random() - 0.5);
+            const container = document.getElementById('puzzleLetters');
+            container.innerHTML = '';
+
+            letters.forEach((letter, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'puzzle-letter';
+                btn.textContent = letter.toUpperCase();
+                btn.onclick = () => selectPuzzleLetter(letter, btn);
+                container.appendChild(btn);
+            });
+
+            puzzleAnswer = [];
+            document.getElementById('puzzleAnswer').innerHTML = '';
+        }
+
+        function selectPuzzleLetter(letter, btn) {
+            puzzleAnswer.push(letter);
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+
+            const answerDiv = document.getElementById('puzzleAnswer');
+            const span = document.createElement('span');
+            span.className = 'puzzle-answer-letter';
+            span.textContent = letter.toUpperCase();
+            answerDiv.appendChild(span);
+
+            if (puzzleAnswer.length === currentPuzzle.length) {
+                checkPuzzleAnswer();
+            }
+        }
+
+        function checkPuzzleAnswer() {
+            const userWord = puzzleAnswer.join('');
+            if (userWord === currentPuzzle) {
+                puzzleScore += 15;
+                document.getElementById('puzzleScore').textContent = puzzleScore;
+                if (window.audioManager) window.audioManager.playSuccessSound();
+                if (window.celebration) window.celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+                setTimeout(() => {
+                    alert('太棒了！正确！');
+                    loadPuzzle();
+                }, 500);
+            } else {
+                if (window.audioManager) window.audioManager.playErrorSound();
+                alert('不对哦，再试试！');
+                resetPuzzle();
+            }
+        }
+
+        function resetPuzzle() {
+            puzzleAnswer = [];
+            document.getElementById('puzzleAnswer').innerHTML = '';
+            document.querySelectorAll('.puzzle-letter').forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            });
+        }
+
+        // ========= 听力选择游戏 =========
+        let listenScore = 0;
+        let currentListenWord = '';
+
+        function initListenGame() {
+            listenScore = 0;
+            document.getElementById('listenScore').textContent = 0;
+            loadListenQuestion();
+        }
+
+        function loadListenQuestion() {
+            const words = [
+                { word: 'cat', options: ['cat', 'bat', 'hat'] },
+                { word: 'dog', options: ['dog', 'log', 'fog'] },
+                { word: 'bird', options: ['bird', 'word', 'third'] },
+                { word: 'fish', options: ['fish', 'dish', 'wish'] },
+                { word: 'ball', options: ['ball', 'call', 'fall'] },
+                { word: 'tree', options: ['tree', 'free', 'see'] },
+                { word: 'star', options: ['star', 'car', 'far'] },
+                { word: 'moon', options: ['moon', 'soon', 'noon'] }
+            ];
+            const q = words[Math.floor(Math.random() * words.length)];
+            currentListenWord = q.word;
+
+            // 打乱选项
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+
+            const container = document.getElementById('listenOptions');
+            container.innerHTML = '';
+
+            shuffled.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'listen-option';
+                btn.textContent = option;
+                btn.onclick = () => checkListenAnswer(option, btn);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('listenFeedback').textContent = '';
+        }
+
+        function playListenWord() {
+            if (window.audioManager && currentListenWord) {
+                window.audioManager.speakWord(currentListenWord);
+            }
+        }
+
+        function checkListenAnswer(selected, btn) {
+            const buttons = document.querySelectorAll('.listen-option');
+            buttons.forEach(b => b.disabled = true);
+
+            if (selected === currentListenWord) {
+                btn.classList.add('correct');
+                listenScore += 10;
+                document.getElementById('listenScore').textContent = listenScore;
+                document.getElementById('listenFeedback').textContent = '✅ 正确！';
+                document.getElementById('listenFeedback').style.color = 'green';
+                if (window.audioManager) window.audioManager.playSuccessSound();
+                setTimeout(() => loadListenQuestion(), 1500);
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('listenFeedback').textContent = `❌ 不对，是 "${currentListenWord}"`;
+                document.getElementById('listenFeedback').style.color = 'red';
+                if (window.audioManager) window.audioManager.playErrorSound();
+                setTimeout(() => loadListenQuestion(), 2000);
+            }
+        }
+
+        // ========= 单词消消乐游戏 =========
+        let matchScore = 0;
+        let matchPairs = [];
+        let firstCard = null;
+        let lockBoard = false;
+
+        function initMatchGame() {
+            matchScore = 0;
+            document.getElementById('matchScore').textContent = 0;
+            loadMatchCards();
+        }
+
+        function loadMatchCards() {
+            const words = [
+                { word: 'cat', emoji: '🐱' },
+                { word: 'dog', emoji: '🐶' },
+                { word: 'bird', emoji: '🐦' },
+                { word: 'fish', emoji: '🐟' },
+                { word: 'star', emoji: '⭐' },
+                { word: 'moon', emoji: '🌙' }
+            ];
+
+            // 创建配对的卡片（单词+图片各一张）
+            matchPairs = [];
+            words.forEach(item => {
+                matchPairs.push({ type: 'word', content: item.word, matchId: item.word });
+                matchPairs.push({ type: 'emoji', content: item.emoji, matchId: item.word });
+            });
+
+            // 打乱顺序
+            matchPairs.sort(() => Math.random() - 0.5);
+
+            const grid = document.getElementById('matchGrid');
+            grid.innerHTML = '';
+            firstCard = null;
+            lockBoard = false;
+
+            matchPairs.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.dataset.index = index;
+                card.dataset.matchId = item.matchId;
+                card.dataset.type = item.type;
+
+                const front = document.createElement('div');
+                front.className = 'match-card-front';
+                front.textContent = '?';
+
+                const back = document.createElement('div');
+                back.className = 'match-card-back';
+                back.textContent = item.type === 'word' ? item.content : item.content;
+
+                card.appendChild(front);
+                card.appendChild(back);
+
+                card.onclick = () => flipMatchCard(card);
+                grid.appendChild(card);
+            });
+        }
+
+        function flipMatchCard(card) {
+            if (lockBoard) return;
+            if (card.classList.contains('flipped')) return;
+
+            card.classList.add('flipped');
+
+            if (!firstCard) {
+                firstCard = card;
+                return;
+            }
+
+            // 检查匹配
+            const isMatch = firstCard.dataset.matchId === card.dataset.matchId &&
+                            firstCard.dataset.type !== card.dataset.type;
+
+            if (isMatch) {
+                // 匹配成功
+                matchScore += 20;
+                document.getElementById('matchScore').textContent = matchScore;
+                document.getElementById('matchFeedback').textContent = '✨ 匹配成功！';
+                document.getElementById('matchFeedback').style.color = 'green';
+
+                if (window.audioManager) window.audioManager.playSuccessSound();
+
+                firstCard = null;
+                lockBoard = false;
+
+                // 检查是否全部完成
+                const allFlipped = document.querySelectorAll('.match-card:not(.flipped)').length === 0;
+                if (allFlipped) {
+                    setTimeout(() => {
+                        alert('🎉 恭喜！全部匹配完成！');
+                        loadMatchCards();
+                    }, 1000);
+                }
+            } else {
+                // 不匹配
+                lockBoard = true;
+                document.getElementById('matchFeedback').textContent = '再试试！';
+                document.getElementById('matchFeedback').style.color = 'red';
+
+                if (window.audioManager) window.audioManager.playErrorSound();
+
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    card.classList.remove('flipped');
+                    firstCard = null;
+                    lockBoard = false;
+                }, 1000);
+            }
         }
 
         // 更新星星显示

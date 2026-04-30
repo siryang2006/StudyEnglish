@@ -339,3 +339,210 @@
         height: 300px;
     }
 }
+
+/* 拼图单词游戏 */
+.puzzle-game {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-card);
+    text-align: center;
+}
+
+.puzzle-target {
+    font-size: 28px;
+    color: var(--text-dark);
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.puzzle-letters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.puzzle-letter {
+    width: 60px;
+    height: 60px;
+    border: 3px solid var(--primary-color);
+    border-radius: 12px;
+    background: white;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: var(--text-dark);
+}
+
+.puzzle-letter:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.puzzle-answer {
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.puzzle-answer-letter {
+    width: 50px;
+    height: 50px;
+    border: 2px dashed var(--success-color);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.puzzle-hint {
+    color: var(--text-light);
+    font-size: 16px;
+}
+
+/* 听力选择游戏 */
+.listen-game {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-card);
+    text-align: center;
+}
+
+.listen-play-btn {
+    padding: 20px 40px;
+    font-size: 24px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 20px 0;
+}
+
+.listen-play-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
+}
+
+.listen-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.listen-option {
+    padding: 20px;
+    border: 3px solid var(--primary-color);
+    border-radius: 15px;
+    background: white;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: var(--text-dark);
+}
+
+.listen-option:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+}
+
+.listen-option.correct {
+    background: var(--success-color);
+    color: white;
+    border-color: var(--success-color);
+}
+
+.listen-option.wrong {
+    background: #FF6B6B;
+    color: white;
+    border-color: #FF6B6B;
+}
+
+.listen-feedback {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+    min-height: 30px;
+}
+
+/* 单词消消乐游戏 */
+.match-game {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-card);
+    text-align: center;
+}
+
+.match-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin: 30px auto;
+    max-width: 600px;
+}
+
+.match-card {
+    aspect-ratio: 1;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.match-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.match-card.flipped .match-card-inner {
+    transform: rotateY(180deg);
+}
+
+.match-card-front,
+.match-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.match-card-front {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+}
+
+.match-card-back {
+    background: white;
+    color: var(--text-dark);
+    border: 3px solid var(--primary-color);
+    transform: rotateY(180deg);
+}
+
+.match-feedback {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+    min-height: 30px;
+}

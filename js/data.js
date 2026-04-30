@@ -82,36 +82,40 @@ const alphabetData = [
     { letter: 'Z', word: 'Zoo', image: '🦁', phonetic: '/z/' }
 ];
 
-// 单词分类数据（增加更多单词）
+// 单词分类数据（增加更多单词，支持真实图片路径）
 const wordCategories = {
     animals: {
         name: '动物',
         icon: '🐾',
         words: [
-            { word: 'cat', chinese: '猫', image: '🐱', phonetic: '/kæt/' },
-            { word: 'dog', chinese: '狗', image: '🐶', phonetic: '/dɒg/' },
-            { word: 'elephant', chinese: '大象', image: '🐘', phonetic: '/ˈelɪfənt/' },
-            { word: 'lion', chinese: '狮子', image: '🦁', phonetic: '/ˈlaɪən/' },
-            { word: 'bird', chinese: '鸟', image: '🐦', phonetic: '/bɜ:d/' },
-            { word: 'fish', chinese: '鱼', image: '🐟', phonetic: '/fɪʃ/' },
-            { word: 'rabbit', chinese: '兔子', image: '🐰', phonetic: '/ˈræbɪt/' },
-            { word: 'monkey', chinese: '猴子', image: '🐵', phonetic: '/ˈmʌŋki/' },
-            { word: 'tiger', chinese: '老虎', image: '🐯', phonetic: '/ˈtaɪɡə/' },
-            { word: 'bear', chinese: '熊', image: '🐻', phonetic: '/beə/' }
+            { word: 'cat', chinese: '猫', image: '🐱', imageSrc: 'assets/images/animals/cat.png', phonetic: '/kæt/' },
+            { word: 'dog', chinese: '狗', image: '🐶', imageSrc: 'assets/images/animals/dog.png', phonetic: '/dɒg/' },
+            { word: 'elephant', chinese: '大象', image: '🐘', imageSrc: 'assets/images/animals/elephant.png', phonetic: '/ˈelɪfənt/' },
+            { word: 'lion', chinese: '狮子', image: '🦁', imageSrc: 'assets/images/animals/lion.png', phonetic: '/ˈlaɪən/' },
+            { word: 'bird', chinese: '鸟', image: '🐦', imageSrc: 'assets/images/animals/bird.png', phonetic: '/bɜ:d/' },
+            { word: 'fish', chinese: '鱼', image: '🐟', imageSrc: 'assets/images/animals/fish.png', phonetic: '/fɪʃ/' },
+            { word: 'rabbit', chinese: '兔子', image: '🐰', imageSrc: 'assets/images/animals/rabbit.png', phonetic: '/ˈræbɪt/' },
+            { word: 'monkey', chinese: '猴子', image: '🐵', imageSrc: 'assets/images/animals/monkey.png', phonetic: '/ˈmʌŋki/' },
+            { word: 'tiger', chinese: '老虎', image: '🐯', imageSrc: 'assets/images/animals/tiger.png', phonetic: '/ˈtaɪɡə/' },
+            { word: 'bear', chinese: '熊', image: '🐻', imageSrc: 'assets/images/animals/bear.png', phonetic: '/beə/' },
+            { word: 'duck', chinese: '鸭子', image: '🦆', imageSrc: 'assets/images/animals/duck.png', phonetic: '/dʌk/' },
+            { word: 'pig', chinese: '猪', image: '🐷', imageSrc: 'assets/images/animals/pig.png', phonetic: '/pɪg/' }
         ]
     },
     food: {
         name: '食物',
         icon: '🍕',
         words: [
-            { word: 'apple', chinese: '苹果', image: '🍎', phonetic: '/ˈæpl/' },
-            { word: 'banana', chinese: '香蕉', image: '🍌', phonetic: '/bəˈnɑ:nə/' },
-            { word: 'bread', chinese: '面包', image: '🍞', phonetic: '/bred/' },
-            { word: 'milk', chinese: '牛奶', image: '🥛', phonetic: '/mɪlk/' },
-            { word: 'egg', chinese: '鸡蛋', image: '🥚', phonetic: '/eg/' },
-            { word: 'rice', chinese: '米饭', image: '🍚', phonetic: '/raɪs/' },
-            { word: 'cake', chinese: '蛋糕', image: '🎂', phonetic: '/keɪk/' },
-            { word: 'water', chinese: '水', image: '💧', phonetic: '/ˈwɔ:tə/' }
+            { word: 'apple', chinese: '苹果', image: '🍎', imageSrc: 'assets/images/food/apple.png', phonetic: '/ˈæpl/' },
+            { word: 'banana', chinese: '香蕉', image: '🍌', imageSrc: 'assets/images/food/banana.png', phonetic: '/bəˈnɑ:nə/' },
+            { word: 'bread', chinese: '面包', image: '🍞', imageSrc: 'assets/images/food/bread.png', phonetic: '/bred/' },
+            { word: 'milk', chinese: '牛奶', image: '🥛', imageSrc: 'assets/images/food/milk.png', phonetic: '/mɪlk/' },
+            { word: 'egg', chinese: '鸡蛋', image: '🥚', imageSrc: 'assets/images/food/egg.png', phonetic: '/eg/' },
+            { word: 'rice', chinese: '米饭', image: '🍚', imageSrc: 'assets/images/food/rice.png', phonetic: '/raɪs/' },
+            { word: 'cake', chinese: '蛋糕', image: '🎂', imageSrc: 'assets/images/food/cake.png', phonetic: '/keɪk/' },
+            { word: 'water', chinese: '水', image: '💧', imageSrc: 'assets/images/food/water.png', phonetic: '/ˈwɔ:tə/' },
+            { word: 'orange', chinese: '橙子', image: '🍊', imageSrc: 'assets/images/food/orange.png', phonetic: '/ˈɒrɪndʒ/' },
+            { word: 'grape', chinese: '葡萄', image: '🍇', imageSrc: 'assets/images/food/grape.png', phonetic: '/ɡreɪp/' }
         ]
     },
     colors: {

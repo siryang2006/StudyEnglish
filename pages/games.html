@@ -511,6 +511,8 @@
     <script src="../js/data.js"></script>
     <script src="../js/audio.js"></script>
     <script src="../js/storage.js"></script>
+    <script src="../js/imageLoader.js"></script>
+    <script src="../js/games.js"></script>
     <script src="../js/app.js"></script>
     <script>
         const games = [
@@ -1064,14 +1066,28 @@
 
         // 气球游戏（使用games.js）
         function startBalloonGame() {
+            const container = document.getElementById('balloonsContainer');
+            if (!container) {
+                // 如果不在游戏页面，先显示游戏区域
+                document.getElementById('gamesList').style.display = 'none';
+                document.querySelectorAll('.game-area').forEach(g => g.style.display = 'none');
+                const balloonGame = document.getElementById('balloonGame');
+                if (balloonGame) {
+                    balloonGame.style.display = 'block';
+                    balloonGame.classList.add('active');
+                }
+            }
             if (window.balloonGame) {
                 window.balloonGame.init();
             }
         }
         
-        // 拼图游戏（简化版）
+        // 拼图游戏
         function startPuzzleGame() {
-            alert('拼图游戏开发中...');
+            if (!window.puzzleGame) {
+                window.puzzleGame = new PuzzleGame();
+            }
+            window.puzzleGame.init();
         }
         
         // 更新星星显示

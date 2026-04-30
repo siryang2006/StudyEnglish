@@ -1,0 +1,276 @@
+/* 移动端优化样式 */
+
+/* 通用移动端优化 */
+@media (max-width: 768px) {
+    body {
+        padding: 5px;
+    }
+
+    #app {
+        border-radius: 15px;
+    }
+
+    .main-header {
+        padding: 15px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .logo h1 {
+        font-size: 20px;
+    }
+
+    .logo-icon {
+        font-size: 30px;
+    }
+
+    .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .menu-card {
+        padding: 20px 15px;
+    }
+
+    .card-icon {
+        font-size: 48px;
+    }
+
+    .menu-card h3 {
+        font-size: 20px;
+    }
+
+    .welcome-section h2 {
+        font-size: 24px;
+    }
+
+    .welcome-section p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-header {
+        padding: 10px;
+    }
+
+    .logo h1 {
+        font-size: 18px;
+    }
+
+    .menu-grid {
+        gap: 10px;
+    }
+
+    .menu-card {
+        padding: 15px 10px;
+    }
+
+    .card-icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+
+    .menu-card h3 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .menu-card p {
+        font-size: 14px;
+    }
+
+    .back-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
+/* 字母页面移动端 */
+@media (max-width: 768px) {
+    .big-letter {
+        font-size: 100px;
+    }
+
+    .letter-image {
+        font-size: 80px;
+    }
+
+    .letter-word {
+        font-size: 36px;
+    }
+
+    .letter-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 10px;
+    }
+
+    .letter-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+
+    .letter-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .action-btn {
+        width: 80%;
+    }
+}
+
+/* 音标页面移动端 */
+@media (max-width: 768px) {
+    .phonetics-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 15px;
+    }
+
+    .phonetic-symbol {
+        font-size: 36px;
+    }
+
+    .phonetics-tabs {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tab-btn {
+        width: 80%;
+    }
+}
+
+/* 单词卡片移动端 */
+@media (max-width: 768px) {
+    .flashcard-container {
+        width: 280px;
+        height: 380px;
+    }
+
+    .word-image {
+        font-size: 80px;
+    }
+
+    .word-text {
+        font-size: 36px;
+    }
+
+    .word-chinese {
+        font-size: 30px;
+    }
+
+    .card-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .control-btn {
+        width: 80%;
+    }
+}
+
+/* 游戏页面移动端 */
+@media (max-width: 768px) {
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .game-card {
+        padding: 20px;
+    }
+
+    .game-icon {
+        font-size: 56px;
+    }
+
+    .balloons-container {
+        height: 350px;
+    }
+
+    .balloon {
+        width: 55px;
+        height: 70px;
+        font-size: 14px;
+    }
+
+    .listen-options {
+        grid-template-columns: 1fr;
+    }
+
+    .match-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .sentence-target {
+        min-height: 80px;
+        padding: 15px;
+    }
+
+    .word-chip {
+        padding: 10px 15px;
+        font-size: 18px;
+    }
+}
+
+/* 进度页面移动端 */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-icon {
+        font-size: 36px;
+    }
+
+    .stat-number {
+        font-size: 32px;
+    }
+
+    .badges-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    }
+}
+
+/* 触摸优化 */
+@media (hover: none) {
+    .menu-card:hover,
+    .game-card:hover,
+    .letter-btn:hover,
+    .listen-option:hover {
+        transform: none;
+    }
+
+    .menu-card:active {
+        transform: scale(0.95);
+    }
+
+    .game-card:active {
+        transform: scale(0.98);
+    }
+
+    button, .ripple {
+        min-height: 44px; /* Apple推荐的最小触摸目标 */
+    }
+}
+
+/* 横屏优化 */
+@media (orientation: landscape) and (max-height: 500px) {
+    .main-header {
+        padding: 10px 20px;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}

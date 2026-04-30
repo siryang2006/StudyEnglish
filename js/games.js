@@ -1,4 +1,4 @@
-// 游戏引擎 - 包含优化的气球爆炸效果
+// 游戏引擎 - 包含气球游戏、拼图游戏等
 
 // ========== 气球游戏引擎 ==========
 class BalloonGame {
@@ -13,8 +13,41 @@ class BalloonGame {
 
     init() {
         this.container = document.getElementById('balloonsContainer');
-        if (!this.container) return;
+        if (!this.container) {
+            // 如果不在游戏页面，创建容器
+            this.createBalloonContainer();
+            return;
+        }
         
+        this.score = 0;
+        this.timer = 60;
+        this.isActive = true;
+        
+        document.getElementById('balloonScore').textContent = 0;
+        document.getElementById('balloonTimer').textContent = 60;
+        
+        this.generateBalloons();
+        this.startTimer();
+    }
+
+    createBalloonContainer() {
+        const gameArea = document.getElementById('balloonGame');
+        if (!gameArea) return;
+        
+        gameArea.innerHTML = `
+            <div class="game-header">
+                <h3>🎈 气球单词</h3>
+                <div class="game-score">分数: <span id="balloonScore">0</span></div>
+                <div class="game-timer">时间: <span id="balloonTimer">60</span>s</div>
+            </div>
+            <p style="text-align: center; margin-bottom: 15px; color: var(--text-light);">
+                点击正确的单词气球！目标：<span id="balloonTarget">cat</span>
+            </p>
+            <div class="balloons-container" id="balloonsContainer"></div>
+            <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
+        `;
+        
+        this.container = document.getElementById('balloonsContainer');
         this.score = 0;
         this.timer = 60;
         this.isActive = true;
@@ -232,5 +265,120 @@ class BalloonGame {
     }
 }
 
+// ========== 拼图游戏引擎 ==========
+class PuzzleGame {
+    constructor() {
+        this.currentWord = null;
+        this.letters = [];
+        this.blanks = [];
+    }
+
+    init() {
+        const words = [
+            { word: 'CAT', hint: '🐱 猫', letters: ['C', 'A', 'T'] },
+            { word: 'DOG', hint: '🐶 狗', letters: ['D', 'O', 'G'] },
+            { word: 'SUN', hint: '☀️ 太阳', letters: ['S', 'U', 'N'] },
+            { word: 'FISH', hint: '🐟 鱼', letters: ['F', 'I', 'S', 'H'] },
+            { word: 'BIRD', hint: '🐦 鸟', letters: ['B', 'I', 'R', 'D'] }
+        ];
+        
+        this.currentWord = words[Math.floor(Math.random() * words.length)];
+        
+        this.renderPuzzle();
+    }
+
+    renderPuzzle() {
+        // 创建字母池（打乱顺序）
+        const shuffledLetters = [...this.currentWord.letters].sort(() => Math.random() - 0.5);
+        
+        const lettersContainer = document.getElementById('puzzleLetters');
+        if (!lettersContainer) return;
+        lettersContainer.innerHTML = '';
+        
+        shuffledLetters.forEach((letter, index) => {
+            const div = document.createElement('div');
+            div.className = 'puzzle-letter';
+            div.textContent = letter;
+            div.dataset.letter = letter;
+            div.onclick = () => this.selectLetter(div);
+            lettersContainer.appendChild(div);
+        });
+        
+        // 创建空位
+        const blanksContainer = document.getElementById('puzzleBlanks');
+        if (!blanksContainer) return;
+        blanksContainer.innerHTML = '';
+        
+        for (let i = 0; i < this.currentWord.letters.length; i++) {
+            const div = document.createElement('div');
+            div.className = 'puzzle-blank';
+            div.dataset.index = i;
+            blanksContainer.appendChild(div);
+        }
+        
+        // 显示提示
+        const hintElem = document.getElementById('puzzleHint');
+        if (hintElem) hintElem.textContent = this.currentWord.hint;
+        
+        const wordElem = document.getElementById('puzzleWord');
+        if (wordElem) wordElem.textContent = this.currentWord.word;
+    }
+
+    selectLetter(letterDiv) {
+        if (letterDiv.classList.contains('used')) return;
+        
+        letterDiv.classList.add('used');
+        
+        const blanks = document.querySelectorAll('.puzzle-blank:not(.filled)');
+        if (blanks.length > 0) {
+            blanks[0].textContent = letterDiv.dataset.letter;
+            blanks[0].classList.add('filled');
+            blanks[0].dataset.letter = letterDiv.dataset.letter;
+            
+            // 检查是否完成
+            setTimeout(() => this.checkPuzzle(), 300);
+        }
+    }
+
+    checkPuzzle() {
+        const filledBlanks = document.querySelectorAll('.puzzle-blank.filled');
+        if (filledBlanks.length < this.currentWord.letters.length) return;
+        
+        const answer = Array.from(filledBlanks).map(el => el.dataset.letter).join('');
+        
+        if (answer === this.currentWord.word) {
+            alert('正确！太棒了！');
+            if (window.audioManager) {
+                window.audioManager.playSuccessSound();
+            }
+            if (window.storage) {
+                window.storage.addStars(10);
+            }
+            
+            // 重置游戏
+            setTimeout(() => this.init(), 1000);
+        } else {
+            alert('再试试看！');
+            if (window.audioManager) {
+                window.audioManager.playErrorSound();
+            }
+            
+            // 清空空位
+            const blanks = document.querySelectorAll('.puzzle-blank');
+            blanks.forEach(blank => {
+                blank.textContent = '';
+                blank.classList.remove('filled');
+                delete blank.dataset.letter;
+            });
+            
+            // 重置字母
+            document.querySelectorAll('.puzzle-letter').forEach(el => {
+                el.classList.remove('used');
+            });
+        }
+    }
+}
+
 // 全局游戏实例
 window.balloonGame = new BalloonGame();
+window.puzzleGame = new PuzzleGame();

@@ -5,6 +5,9 @@ class AudioManager {
         this.voices = [];
         this.currentVoice = null;
         this.audioCache = {}; // 缓存音频
+        this.audioContext = null;
+        this.audioContextResumed = false;
+        this.userInteracted = false;
         this.init();
     }
 
@@ -19,6 +22,9 @@ class AudioManager {
         // 立即尝试获取
         this.voices = this.synth.getVoices();
         this.selectEnglishVoice();
+
+        // 监听用户首次交互以启用音频
+        this.setupUserInteractionListener();
         
         // 预定义正确的发音映射（解决音标发音不准问题）
         this.phoneticWords = {
@@ -92,6 +98,35 @@ class AudioManager {
         ) || this.voices.find(voice =>
             voice.lang.startsWith('en')
         );
+    }
+
+    setupUserInteractionListener() {
+        const resumeAudio = () => {
+            if (this.audioContextResumed) return;
+            this.audioContextResumed = true;
+            this.userInteracted = true;
+
+            // 预初始化 AudioContext（需要用户交互后才能启动）
+            try {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                if (this.audioContext.state === 'suspended') {
+                    this.audioContext.resume();
+                }
+            } catch (e) {
+                console.warn('AudioContext init failed:', e);
+            }
+
+            // 触发一次语音合成以解锁音频
+            if (this.synth) {
+                const utterance = new SpeechSynthesisUtterance('');
+                this.synth.speak(utterance);
+            }
+        };
+
+        // 监听多种用户交互事件
+        ['click', 'touchstart', 'keydown'].forEach(event => {
+            document.addEventListener(event, resumeAudio, { once: true });
+        });
     }
 
     // 朗读文本 - 改进版

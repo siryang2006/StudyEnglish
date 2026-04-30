@@ -104,10 +104,9 @@ class KidsEnglishApp {
         // 为所有导航链接添加过渡动画
         document.querySelectorAll('a[href], .menu-card[onclick]').forEach(link => {
             link.addEventListener('click', function(e) {
-                // 不阻止默认行为，只是添加动画
-                if (window.pageTransition) {
+                if (window.pageTransition && !this.onclick) {
                     e.preventDefault();
-                    const href = this.href || (this.onclick ? this.onclick.toString().match(/'([^']+)'/)?.[1] : null);
+                    const href = this.href;
                     if (href) {
                         window.pageTransition(() => {
                             window.location.href = href;
@@ -158,13 +157,4 @@ let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new KidsEnglishApp();
     initDailySentence();
-    
-    // 页面加载完成后的炫酷效果
-    setTimeout(() => {
-        document.body.style.opacity = '0';
-        document.body.style.transition = 'opacity 0.5s ease-out';
-        setTimeout(() => {
-            document.body.style.opacity = '1';
-        }, 50);
-    }, 100);
 });

@@ -275,10 +275,10 @@
             // 更新进度点
             updateProgressDots();
 
-            // 自动发音
-            setTimeout(() => {
-                audioManager.speakWord(word.word);
-            }, 300);
+            // 不再自动发音，等待用户点击
+            // setTimeout(() => {
+            //     audioManager.speakWord(word.word);
+            // }, 300);
         }
 
         // 翻转卡片

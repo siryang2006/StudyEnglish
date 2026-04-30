@@ -7,11 +7,14 @@
 
 :root {
     --primary: #6C63FF;
+    --primary-color: #6C63FF;
     --primary-light: #8B83FF;
     --secondary: #FF6B9A;
+    --secondary-color: #FF6B9A;
     --secondary-light: #FF8FB5;
     --accent: #FFD93D;
     --success: #00D2A0;
+    --success-color: #00D2A0;
     --warning: #FF8C00;
     --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --card-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

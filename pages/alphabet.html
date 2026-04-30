@@ -308,8 +308,8 @@
                 btn.classList.toggle('completed', storage.data.completedLetters.includes(letterData.letter));
             });
 
-            // 自动播放发音
-            setTimeout(() => speakLetter(), 300);
+            // 不再自动播放，等待用户点击
+            // setTimeout(() => speakLetter(), 300);
         }
 
         // 播放字母发音

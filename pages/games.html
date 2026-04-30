@@ -467,14 +467,8 @@
             stopBalloonGame();
         }
 
-        // ========== 气球游戏逻辑 ==========
-        let balloonScore =0;
-        let balloonTimer = 60;
-        let balloonInterval = null;
-        let currentTarget = '';
-        let isBalloonActive = false;
-
-        function initBalloonGame() {
+// ========== 气球游戏逻辑 ==========
+function initBalloonGame() {
             // 根据难度调整时间
             const timeMap = { easy: 90, medium: 60, hard: 40 };
             balloonScore = 0;
@@ -666,9 +660,10 @@
         }
 
         // ========= 拼图单词游戏 =========
-        let puzzleScore =0;
+        let puzzleScore = 0;
         let currentPuzzle = null;
         let puzzleAnswer = [];
+        let puzzleWords = [];
 
         function initPuzzleGame() {
             // 根据难度调整单词长度
@@ -677,40 +672,17 @@
                 medium: ['apple', 'happy', 'table', 'water', 'music'],
                 hard: ['elephant', 'birthday', 'monkey', 'teacher', 'school']
             };
-            const words = wordMap[currentDifficulty] || wordMap.easy;
-            
-            puzzleScore =0;
-            document.getElementById('puzzleScore').textContent =0;
-            loadPuzzle(words);
-        }
+            puzzleWords = wordMap[currentDifficulty] || wordMap.easy;
 
-        function loadPuzzle(words) {
-            currentPuzzle = words[Math.floor(Math.random() * words.length)];
-            document.getElementById('puzzleTarget').textContent = `拼出单词：${currentPuzzle}`;
-            document.getElementById('puzzleHint').textContent = `提示：\${currentPuzzle.length}个字母`;
-
-            // 打乱字母
-            const letters = currentPuzzle.split('').sort(() => Math.random() - 0.5);
-            const container = document.getElementById('puzzleLetters');
-            container.innerHTML = '';
-
-            letters.forEach((letter, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'puzzle-letter';
-                btn.textContent = letter.toUpperCase();
-                btn.onclick = () => selectPuzzleLetter(letter, btn);
-                container.appendChild(btn);
-            });
-
-            puzzleAnswer = [];
-            document.getElementById('puzzleAnswer').innerHTML = '';
+            puzzleScore = 0;
+            document.getElementById('puzzleScore').textContent = 0;
+            loadPuzzle();
         }
 
         function loadPuzzle() {
-            const words = ['cat', 'dog', 'bird', 'fish', 'ball', 'tree', 'star', 'moon'];
-            currentPuzzle = words[Math.floor(Math.random() * words.length)];
+            currentPuzzle = puzzleWords[Math.floor(Math.random() * puzzleWords.length)];
             document.getElementById('puzzleTarget').textContent = `拼出单词：${currentPuzzle}`;
-            document.getElementById('puzzleHint').textContent = `提示：\${currentPuzzle.length}个字母`;
+            document.getElementById('puzzleHint').textContent = `提示：${currentPuzzle.length}个字母`;
 
             // 打乱字母
             const letters = currentPuzzle.split('').sort(() => Math.random() - 0.5);
@@ -775,25 +747,38 @@
         // ========= 听力选择游戏 =========
         let listenScore = 0;
         let currentListenWord = '';
+        let listenWords = [];
 
         function initListenGame() {
+            // 根据难度调整选项数量
+            const wordMap = {
+                easy: [
+                    { word: 'cat', options: ['cat', 'bat', 'hat'] },
+                    { word: 'dog', options: ['dog', 'log', 'fog'] },
+                    { word: 'fish', options: ['fish', 'dish', 'wish'] }
+                ],
+                medium: [
+                    { word: 'cat', options: ['cat', 'bat', 'hat', 'mat'] },
+                    { word: 'dog', options: ['dog', 'log', 'fog', 'frog'] },
+                    { word: 'bird', options: ['bird', 'word', 'third', 'heard'] },
+                    { word: 'fish', options: ['fish', 'dish', 'wish', 'swish'] }
+                ],
+                hard: [
+                    { word: 'cat', options: ['cat', 'bat', 'hat', 'mat', 'rat'] },
+                    { word: 'dog', options: ['dog', 'log', 'fog', 'frog', 'hog'] },
+                    { word: 'bird', options: ['bird', 'word', 'third', 'heard', 'bird'] },
+                    { word: 'elephant', options: ['elephant', 'tiger', 'lion', 'monkey', 'bear'] }
+                ]
+            };
+            listenWords = wordMap[currentDifficulty] || wordMap.easy;
+
             listenScore = 0;
             document.getElementById('listenScore').textContent = 0;
             loadListenQuestion();
         }
 
         function loadListenQuestion() {
-            const words = [
-                { word: 'cat', options: ['cat', 'bat', 'hat'] },
-                { word: 'dog', options: ['dog', 'log', 'fog'] },
-                { word: 'bird', options: ['bird', 'word', 'third'] },
-                { word: 'fish', options: ['fish', 'dish', 'wish'] },
-                { word: 'ball', options: ['ball', 'call', 'fall'] },
-                { word: 'tree', options: ['tree', 'free', 'see'] },
-                { word: 'star', options: ['star', 'car', 'far'] },
-                { word: 'moon', options: ['moon', 'soon', 'noon'] }
-            ];
-            const q = words[Math.floor(Math.random() * words.length)];
+            const q = listenWords[Math.floor(Math.random() * listenWords.length)];
             currentListenWord = q.word;
 
             // 打乱选项
@@ -845,22 +830,45 @@
         let matchPairs = [];
         let firstCard = null;
         let lockBoard = false;
+        let matchWords = [];
 
         function initMatchGame() {
+            // 根据难度调整卡片对数
+            const wordMap = {
+                easy: [
+                    { word: 'cat', emoji: '🐱' },
+                    { word: 'dog', emoji: '🐶' },
+                    { word: 'fish', emoji: '🐟' },
+                    { word: 'bird', emoji: '🐦' }
+                ],
+                medium: [
+                    { word: 'cat', emoji: '🐱' },
+                    { word: 'dog', emoji: '🐶' },
+                    { word: 'fish', emoji: '🐟' },
+                    { word: 'bird', emoji: '🐦' },
+                    { word: 'star', emoji: '⭐' },
+                    { word: 'moon', emoji: '🌙' }
+                ],
+                hard: [
+                    { word: 'cat', emoji: '🐱' },
+                    { word: 'dog', emoji: '🐶' },
+                    { word: 'fish', emoji: '🐟' },
+                    { word: 'bird', emoji: '🐦' },
+                    { word: 'star', emoji: '⭐' },
+                    { word: 'moon', emoji: '🌙' },
+                    { word: 'apple', emoji: '🍎' },
+                    { word: 'book', emoji: '📖' }
+                ]
+            };
+            matchWords = wordMap[currentDifficulty] || wordMap.easy;
+
             matchScore = 0;
             document.getElementById('matchScore').textContent = 0;
             loadMatchCards();
         }
 
         function loadMatchCards() {
-            const words = [
-                { word: 'cat', emoji: '🐱' },
-                { word: 'dog', emoji: '🐶' },
-                { word: 'bird', emoji: '🐦' },
-                { word: 'fish', emoji: '🐟' },
-                { word: 'star', emoji: '⭐' },
-                { word: 'moon', emoji: '🌙' }
-            ];
+            const words = matchWords;
 
             // 创建配对的卡片（单词+图片各一张）
             matchPairs = [];
@@ -957,25 +965,39 @@
         let currentSentence = null;
         let sentenceWords = [];
         let selectedWords = [];
+        let sentenceList = [];
 
         function initSentenceGame() {
+            // 根据难度选择句子
+            const sentenceMap = {
+                easy: [
+                    { en: 'I love my family.', zh: '我爱我的家人。' },
+                    { en: 'The cat is cute.', zh: '这只猫很可爱。' },
+                    { en: 'We go to school.', zh: '我们去上学。' },
+                    { en: 'This is a book.', zh: '这是一本书。' }
+                ],
+                medium: [
+                    { en: 'She likes apples.', zh: '她喜欢苹果。' },
+                    { en: 'They are happy.', zh: '他们很开心。' },
+                    { en: 'I like English.', zh: '我喜欢英语。' },
+                    { en: 'He is a teacher.', zh: '他是一名老师。' }
+                ],
+                hard: [
+                    { en: 'He is playing football.', zh: '他正在踢足球。' },
+                    { en: 'We are learning English.', zh: '我们正在学英语。' },
+                    { en: 'The sun is shining brightly.', zh: '阳光明媚。' },
+                    { en: 'Birds can fly high in sky.', zh: '鸟儿能在天空高飞。' }
+                ]
+            };
+            sentenceList = sentenceMap[currentDifficulty] || sentenceMap.easy;
+
             sentenceScore = 0;
             document.getElementById('sentenceScore').textContent = 0;
             loadSentence();
         }
 
         function loadSentence() {
-            const sentences = [
-                { en: 'I love my family.', zh: '我爱我的家人。' },
-                { en: 'The cat is cute.', zh: '这只猫很可爱。' },
-                { en: 'We go to school.', zh: '我们去上学。' },
-                { en: 'She likes apples.', zh: '她喜欢苹果。' },
-                { en: 'He is playing football.', zh: '他正在踢足球。' },
-                { en: 'They are happy.', zh: '他们很开心。' },
-                { en: 'This is a book.', zh: '这是一本书。' },
-                { en: 'I like English.', zh: '我喜欢英语。' }
-            ];
-            currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
+            currentSentence = sentenceList[Math.floor(Math.random() * sentenceList.length)];
 
             // 拆分单词并打乱
             sentenceWords = currentSentence.en.slice(0, -1).split(' ');
@@ -1052,8 +1074,17 @@
         let currentReadSentence = null;
         let recognition = null;
         let isRecording = false;
+        let readSentences = [];
 
         function initReadGame() {
+            // 根据难度选择句子
+            const sentenceMap = {
+                easy: ['Hello!', 'How are you?', 'I am happy.', 'This is a cat.', 'I like it.'],
+                medium: ['I love my family.', 'The cat is cute.', 'We go to school.', 'She likes apples.', 'He is tall.'],
+                hard: ['The sun is shining brightly.', 'My mother likes cooking.', 'We are learning English.', 'Birds can fly high in sky.']
+            };
+            readSentences = sentenceMap[currentDifficulty] || sentenceMap.easy;
+
             readScore = 0;
             document.getElementById('readScore').textContent = 0;
 
@@ -1093,19 +1124,7 @@
         }
 
         function loadReadSentence() {
-            const sentences = [
-                // 入门级（短句）
-                'Hello!', 'How are you?', 'I am happy.', 'This is a cat.',
-                'I like it.', 'She is nice.', 'He is tall.',
-                // 进阶级（中等长度）
-                'I love my family.', 'The cat is cute.', 'We go to school.',
-                'She likes apples.', 'He is playing football.',
-                'They are playing.', 'I have a book.',
-                // 高级（复杂句）
-                'The sun is shining brightly.', 'My mother likes cooking.',
-                'We are learning English.', 'Birds can fly high in sky.'
-            ];
-            currentReadSentence = sentences[Math.floor(Math.random() * sentences.length)];
+            currentReadSentence = readSentences[Math.floor(Math.random() * readSentences.length)];
             document.getElementById('readSentence').textContent = currentReadSentence;
             document.getElementById('readFeedback').textContent = '点击"开始跟读"按钮，然后跟读上面的句子';
             document.getElementById('readFeedback').style.color = 'var(--text-light)';

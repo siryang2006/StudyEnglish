@@ -1,13 +1,9 @@
-// 音频处理模块 - 修复发音问题
+// 音频处理模块 - 简化版，适配HTTPS
 class AudioManager {
     constructor() {
         this.synth = window.speechSynthesis;
         this.voices = [];
         this.currentVoice = null;
-        this.audioCache = {}; // 缓存音频
-        this.audioContext = null;
-        this.audioContextResumed = false;
-        this.userInteracted = false;
         this.init();
     }
 
@@ -22,56 +18,20 @@ class AudioManager {
         // 立即尝试获取
         this.voices = this.synth.getVoices();
         this.selectEnglishVoice();
-
-        // 监听用户首次交互以启用音频
-        this.setupUserInteractionListener();
         
         // 预定义正确的发音映射（解决音标发音不准问题）
         this.phoneticWords = {
-            'i:': 'sheep',
-            'ɪ': 'ship',
-            'e': 'bed',
-            'æ': 'cat',
-            'ɑ:': 'car',
-            'ɒ': 'hot',
-            'ɔ:': 'door',
-            'ʊ': 'book',
-            'u:': 'moon',
-            'ʌ': 'bus',
-            'ɜ:': 'bird',
-            'ə': 'about',
-            'eɪ': 'day',
-            'aɪ': 'eye',
-            'ɔɪ': 'boy',
-            'aʊ': 'now',
-            'əʊ': 'go',
-            'ɪə': 'ear',
-            'eə': 'air',
-            'ʊə': 'tour',
-            'p': 'pen',
-            'b': 'boy',
-            't': 'tea',
-            'd': 'dog',
-            'k': 'key',
-            'g': 'go',
-            'f': 'fish',
-            'v': 'voice',
-            'θ': 'think',
-            'ð': 'this',
-            's': 'sun',
-            'z': 'zoo',
-            'ʃ': 'she',
-            'ʒ': 'pleasure',
-            'tʃ': 'chair',
-            'dʒ': 'jump',
-            'm': 'man',
-            'n': 'no',
-            'ŋ': 'sing',
-            'l': 'like',
-            'r': 'red',
-            'w': 'we',
-            'j': 'yes',
-            'h': 'he'
+            'i:': 'sheep', 'ɪ': 'ship', 'e': 'bed', 'æ': 'cat',
+            'ɑ:': 'car', 'ɒ': 'hot', 'ɔ:': 'door', 'ʊ': 'book',
+            'u:': 'moon', 'ʌ': 'bus', 'ɜ:': 'bird', 'ə': 'about',
+            'eɪ': 'day', 'aɪ': 'eye', 'ɔɪ': 'boy', 'aʊ': 'now',
+            'əʊ': 'go', 'ɪə': 'ear', 'eə': 'air', 'ʊə': 'tour',
+            'p': 'pen', 'b': 'boy', 't': 'tea', 'd': 'dog',
+            'k': 'key', 'g': 'go', 'f': 'fish', 'v': 'voice',
+            'θ': 'think', 'ð': 'this', 's': 'sun', 'z': 'zoo',
+            'ʃ': 'she', 'ʒ': 'pleasure', 'tʃ': 'chair', 'dʒ': 'jump',
+            'm': 'man', 'n': 'no', 'ŋ': 'sing', 'l': 'like',
+            'r': 'red', 'w': 'we', 'j': 'yes', 'h': 'he'
         };
     }
 
@@ -100,36 +60,7 @@ class AudioManager {
         );
     }
 
-    setupUserInteractionListener() {
-        const resumeAudio = () => {
-            if (this.audioContextResumed) return;
-            this.audioContextResumed = true;
-            this.userInteracted = true;
-
-            // 预初始化 AudioContext（需要用户交互后才能启动）
-            try {
-                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                if (this.audioContext.state === 'suspended') {
-                    this.audioContext.resume();
-                }
-            } catch (e) {
-                console.warn('AudioContext init failed:', e);
-            }
-
-            // 触发一次语音合成以解锁音频
-            if (this.synth) {
-                const utterance = new SpeechSynthesisUtterance('');
-                this.synth.speak(utterance);
-            }
-        };
-
-        // 监听多种用户交互事件
-        ['click', 'touchstart', 'keydown'].forEach(event => {
-            document.addEventListener(event, resumeAudio, { once: true });
-        });
-    }
-
-    // 朗读文本 - 改进版
+    // 朗读文本
     speak(text, rate = 0.8, pitch = 1.1) {
         if (!this.synth) {
             console.warn('Speech synthesis not supported');
@@ -141,12 +72,11 @@ class AudioManager {
 
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.voice = this.currentVoice;
-        utterance.rate = rate; // 语速稍慢适合儿童
-        utterance.pitch = pitch; // 音调稍高更友好
+        utterance.rate = rate;
+        utterance.pitch = pitch;
         utterance.volume = 1;
         utterance.lang = 'en-US';
 
-        // 添加错误处理
         utterance.onerror = (e) => {
             console.warn('Speech error:', e);
         };
@@ -154,22 +84,20 @@ class AudioManager {
         this.synth.speak(utterance);
     }
 
-    // 播放音标发音 - 使用对应的示例单词
+    // 播放音标发音
     speakPhonetic(symbol) {
         const word = this.phoneticWords[symbol];
         if (word) {
             this.speak(word, 0.7, 1.2);
         } else {
-            // 如果没有对应单词，尝试直接发音
             this.speak(symbol, 0.6, 1.0);
         }
     }
 
-    // 播放字母发音 - 包含字母音和示例词
+    // 播放字母发音
     speakLetter(letter) {
         const letterData = alphabetData.find(item => item.letter === letter);
         if (letterData) {
-            // 先读字母，再读单词
             this.speak(letter, 0.7, 1.3);
             setTimeout(() => {
                 this.speak(letterData.word, 0.8, 1.1);
@@ -177,7 +105,7 @@ class AudioManager {
         }
     }
 
-    // 播放单词发音 - 改进
+    // 播放单词发音
     speakWord(word) {
         this.speak(word, 0.75, 1.1);
     }
@@ -187,7 +115,7 @@ class AudioManager {
         this.speak(sentence, 0.8, 1.0);
     }
 
-    // 播放成功音效 - 使用Web Audio API
+    // 播放成功音效 - 简化版
     playSuccessSound() {
         try {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -198,9 +126,9 @@ class AudioManager {
             gainNode.connect(audioContext.destination);
 
             oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-            oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
-            oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+            oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+            oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
+            oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
 
             gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);

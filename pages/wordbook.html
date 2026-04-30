@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词书 - KidsEnglish Fun</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/games.css">
+    <link rel="stylesheet" href="../css/celebration.css">
+    <link rel="stylesheet" href="../css/effects.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .wordbook-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 3px solid var(--primary-color);
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus {
+            box-shadow: 0 0 20px rgba(108, 99, 255, 0.3);
+        }
+
+        .category-section {
+            margin: 30px 0;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .category-header h2 {
+            font-size: 28px;
+            color: var(--text-dark);
+        }
+
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .word-item {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .word-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .word-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .word-item:hover::before {
+            left: 100%;
+        }
+
+        .word-emoji {
+            font-size: 60px;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .word-english {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .word-chinese {
+            font-size: 18px;
+            color: var(--text-light);
+        }
+
+        .word-phonetic {
+            font-size: 14px;
+            color: var(--primary-color);
+            font-family: 'Times New Roman', serif;
+            margin-top: 5px;
+        }
+
+        .speak-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .speak-btn:hover {
+            background: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .stats-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        @media (max-width: 768px) {
+            .words-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .word-emoji {
+                font-size: 40px;
+            }
+
+            .word-english {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">📖</span>
+                <h1>单词书</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content wordbook-container">
+            <button class="back-btn" onclick="navigateTo('../index.html')">
+                ← 返回首页
+            </button>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalWords">0</div>
+                    <div class="stat-label">总单词数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="learnedWords">0</div>
+                    <div class="stat-label">已学习</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="categories">0</div>
+                    <div class="stat-label">分类数</div>
+                </div>
+            </div>
+
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 搜索单词或中文意思...">
+
+            <div id="wordbookContent">
+                <!-- 动态生成 -->
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/audio.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/celebration.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        let allWords = [];
+        let filteredWords = [];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllWords();
+            updateStats();
+            renderWordbook();
+            updateStarDisplay();
+
+            // 搜索功能
+            document.getElementById('searchBox').addEventListener('input', function() {
+                const keyword = this.value.toLowerCase();
+                filterWords(keyword);
+            });
+        });
+
+        // 加载所有单词
+        function loadAllWords() {
+            allWords = [];
+            Object.keys(wordCategories).forEach(categoryKey => {
+                const category = wordCategories[categoryKey];
+                category.words.forEach(word => {
+                    allWords.push({
+                        ...word,
+                        category: category.name,
+                        categoryKey: categoryKey,
+                        categoryIcon: category.icon
+                    });
+                });
+            });
+            filteredWords = [...allWords];
+        }
+
+        // 过滤单词
+        function filterWords(keyword) {
+            if (!keyword) {
+                filteredWords = [...allWords];
+            } else {
+                filteredWords = allWords.filter(word =>
+                    word.word.toLowerCase().includes(keyword) ||
+                    word.chinese.includes(keyword)
+                );
+            }
+            renderWordbook();
+        }
+
+        // 渲染单词书
+        function renderWordbook() {
+            const content = document.getElementById('wordbookContent');
+            content.innerHTML = '';
+
+            // 按分类分组
+            const grouped = {};
+            filteredWords.forEach(word => {
+                if (!grouped[word.categoryKey]) {
+                    grouped[word.categoryKey] = {
+                        name: word.category,
+                        icon: word.categoryIcon,
+                        words: []
+                    };
+                }
+                grouped[word.categoryKey].words.push(word);
+            });
+
+            Object.keys(grouped).forEach(key => {
+                const group = grouped[key];
+                const section = document.createElement('div');
+                section.className = 'category-section';
+                section.innerHTML = `
+                    <div class="category-header">
+                        <span style="font-size: 40px;">${group.icon}</span>
+                        <h2>${group.name}</h2>
+                        <span style="color: var(--text-light); font-size: 16px;">(${group.words.length}个单词)</span>
+                    </div>
+                    <div class="words-grid">
+                        ${group.words.map(word => `
+                            <div class="word-item ripple" onclick="speakWordDirectly('${word.word}')">
+                                <button class="speak-btn" onclick="event.stopPropagation(); speakWordDirectly('${word.word}')">🔊</button>
+                                <div class="word-emoji">${word.image}</div>
+                                <div class="word-english">${word.word}</div>
+                                <div class="word-chinese">${word.chinese}</div>
+                                <div class="word-phonetic">${word.phonetic}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                content.appendChild(section);
+            });
+
+            // 如果没有结果
+            if (filteredWords.length === 0) {
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: var(--text-light);">
+                        <div style="font-size: 80px; margin-bottom: 20px;">🔍</div>
+                        <h3>没有找到相关单词</h3>
+                        <p>试试其他关键词吧！</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 直接发音
+        function speakWordDirectly(word) {
+            if (window.audioManager) {
+                window.audioManager.speakWord(word);
+                if (window.celebration) {
+                    window.celebration.simpleSuccess(event?.clientX || window.innerWidth/2, event?.clientY || window.innerHeight/2);
+                }
+            }
+        }
+
+        // 更新统计
+        function updateStats() {
+            document.getElementById('totalWords').textContent = allWords.length;
+            document.getElementById('categories').textContent = Object.keys(wordCategories).length;
+
+            if (window.storage) {
+                document.getElementById('learnedWords').textContent = storage.data.learnedWords?.length || 0;
+            }
+        }
+
+        // 更新星星显示
+        function updateStarDisplay() {
+            const starCount = document.getElementById('starCount');
+            if (starCount && storage) {
+                starCount.textContent = storage.data.stars;
+            }
+        }
+    </script>
+</body>
+</html>

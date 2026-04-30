@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>字母书写 - KidsEnglish Fun</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/games.css">
+    <link rel="stylesheet" href="../css/celebration.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .tracing-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tracing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .letter-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .letter-btn {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--primary-color);
+            border-radius: 12px;
+            background: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-dark);
+        }
+
+        .letter-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .letter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.4);
+        }
+
+        .case-toggle {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 5px;
+            border-radius: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .case-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+        }
+
+        .case-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .canvas-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+        }
+
+        #tracingCanvas {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            margin: 0 auto;
+            display: block;
+            background: #fafafa;
+            border: 3px dashed #ddd;
+            border-radius: 15px;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .tracing-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-clear {
+            background: #FF6B6B;
+            color: white;
+        }
+
+        .btn-guide {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-check {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .letter-display {
+            text-align: center;
+            margin: 20px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            color: white;
+        }
+
+        .letter-big {
+            font-size: 120px;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .letter-info {
+            font-size: 24px;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 20px;
+            color: var(--text-dark);
+            margin: 15px 0;
+        }
+
+        .score-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .hint-text {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .letter-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            #tracingCanvas {
+                height: 300px;
+            }
+
+            .letter-big {
+                font-size: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">✏️</span>
+                <h1>字母书写</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content tracing-container">
+            <button class="back-btn" onclick="navigateTo('../index.html')">
+                ← 返回首页
+            </button>
+
+            <div class="tracing-header">
+                <div class="letter-selector" id="letterSelector">
+                    <!-- 动态生成 -->
+                </div>
+                <div class="case-toggle">
+                    <button class="case-btn active" onclick="switchCase('upper')">大写 A</button>
+                    <button class="case-btn" onclick="switchCase('lower')">小写 a</button>
+                </div>
+            </div>
+
+            <div class="letter-display">
+                <div class="letter-big" id="currentLetter">A</div>
+                <div class="letter-info" id="letterInfo">Apple - 🍎</div>
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="tracingCanvas"></canvas>
+            </div>
+
+            <div class="score-display">
+                书写得分: <span class="score-value" id="scoreValue">0</span> 分
+            </div>
+
+            <div class="tracing-controls">
+                <button class="control-btn btn-clear" onclick="clearCanvas()">🗑️ 清除</button>
+                <button class="control-btn btn-guide" onclick="toggleGuide()">📐 引导线</button>
+                <button class="control-btn btn-check" onclick="checkTracing()">✅ 完成</button>
+            </div>
+
+            <p class="hint-text">💡 提示: 沿着虚线书写字母，完成后点击"完成"按钮</p>
+        </main>
+    </div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/audio.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/celebration.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        const canvas = document.getElementById('tracingCanvas');
+        const ctx = canvas.getContext('2d');
+        let currentLetter = 'A';
+        let currentCase = 'upper';
+        let isDrawing = false;
+        let showGuide = true;
+        let score = 0;
+        let lastX = 0;
+        let lastY = 0;
+
+        // 字母笔画数据（简化版 - 大写字母的关键点）
+        const letterPaths = {
+            'A': [{x:50,y:90},{x:50,y:10},{x:50,y:50},{x:20,y:50},{x:80,y:50}],
+            'B': [{x:30,y:10},{x:30,y:90},{x:30,y:50},{x:30,y:10},{x:70,y:20},{x:30,y:50},{x:30,y:90},{x:70,y:80}],
+            'C': [{x:70,y:20},{x:30,y:20},{x:30,y:80},{x:70,y:80}],
+            'D': [{x:30,y:10},{x:30,y:90},{x:30,y:10},{x:60,y:20},{x:60,y:80},{x:30,y:90}],
+            'E': [{x:70,y:10},{x:30,y:10},{x:30,y:50},{x:70,y:50},{x:30,y:50},{x:30,y:90},{x:70,y:90}],
+            'F': [{x:70,y:10},{x:30,y:10},{x:30,y:50},{x:70,y:50},{x:30,y:50},{x:30,y:90}],
+            'G': [{x:70,y:20},{x:30,y:20},{x:30,y:80},{x:70,y:80},{x:70,y:50},{x:50,y:50}],
+            'H': [{x:30,y:10},{x:30,y:90},{x:70,y:10},{x:70,y:90},{x:30,y:50},{x:70,y:50}],
+            'I': [{x:50,y:10},{x:50,y:90},{x:30,y:10},{x:70,y:10},{x:30,y:90},{x:70,y:90}],
+            'J': [{x:70,y:10},{x:70,y:70},{x:50,y:90},{x:30,y:70}],
+            'K': [{x:30,y:10},{x:30,y:90},{x:30,y:50},{x:70,y:10},{x:30,y:50},{x:70,y:90}],
+            'L': [{x:30,y:10},{x:30,y:90},{x:70,y:90}],
+            'M': [{x:20,y:90},{x:50,y:10},{x:80,y:90},{x:20,y:90},{x:80,y:90}],
+            'N': [{x:30,y:90},{x:30,y:10},{x:70,y:90},{x:70,y:10}],
+            'O': [{x:50,y:20},{x:30,y:50},{x:50,y:80},{x:70,y:50},{x:50,y:20}],
+            'P': [{x:30,y:90},{x:30,y:10},{x:30,y:50},{x:70,y:30},{x:30,y:50}],
+            'Q': [{x:50,y:20},{x:30,y:50},{x:50,y:80},{x:70,y:50},{x:50,y:20},{x:50,y:70},{x:75,y:90}],
+            'R': [{x:30,y:90},{x:30,y:10},{x:30,y:50},{x:70,y:30},{x:30,y:50},{x:70,y:90}],
+            'S': [{x:70,y:20},{x:30,y:20},{x:30,y:50},{x:70,y:50},{x:70,y:80},{x:30,y:80}],
+            'T': [{x:50,y:10},{x:50,y:90},{x:30,y:10},{x:70,y:10}],
+            'U': [{x:30,y:10},{x:30,y:70},{x:50,y:90},{x:70,y:70},{x:70,y:10}],
+            'V': [{x:30,y:10},{x:50,y:90},{x:70,y:10}],
+            'W': [{x:20,y:10},{x:35,y:90},{x:50,y:10},{x:65,y:90},{x:80,y:10}],
+            'X': [{x:30,y:10},{x:70,y:90},{x:70,y:10},{x:30,y:90}],
+            'Y': [{x:30,y:10},{x:50,y:50},{x:70,y:10},{x:50,y:50},{x:50,y:90}],
+            'Z': [{x:30,y:10},{x:70,y:10},{x:30,y:90},{x:70,y:90}]
+        };
+
+        // 小写字母路径（简化版）
+        const lowerLetterPaths = {
+            'a': [{x:60,y:30},{x:30,y:30},{x:30,y:80},{x:60,y:80},{x:60,y:30}],
+            'b': [{x:30,y:10},{x:30,y:90},{x:30,y:50},{x:60,y:30},{x:30,y:50}],
+            'c': [{x:60,y:30},{x:30,y:30},{x:30,y:80},{x:60,y:80}],
+            'd': [{x:60,y:10},{x:60,y:90},{x:60,y:50},{x:30,y:30},{x:60,y:50}],
+            'e': [{x:30,y:80},{x:60,y:80},{x:60,y:50},{x:30,y:50},{x:30,y:30},{x:60,y:30}],
+            'f': [{x:50,y:10},{x:50,y:90},{x:50,y:50},{x:30,y:30},{x:70,y:30}],
+            'g': [{x:60,y:30},{x:30,y:30},{x:30,y:80},{x:60,y:80},{x:60,y:110},{x:30,y:110}],
+            'h': [{x:30,y:10},{x:30,y:90},{x:30,y:50},{x:60,y:30},{x:60,y:90}],
+            'i': [{x:50,y:20},{x:50,y:50},{x:40,y:20},{x:60,y:20},{x:50,y:50},{x:50,y:90}],
+            'j': [{x:60,y:20},{x:60,y:50},{x:60,y:110},{x:40,y:110},{x:40,y:20},{x:60,y:20}],
+            'k': [{x:30,y:10},{x:30,y:90},{x:30,y:50},{x:60,y:30},{x:30,y:50},{x:60,y:70}],
+            'l': [{x:50,y:10},{x:50,y:90}],
+            'm': [{x:20,y:90},{x:20,y:30},{x:40,y:90},{x:40,y:30},{x:60,y:90},{x:60,y:30},{x:80,y:90}],
+            'n': [{x:30,y:90},{x:30,y:30},{x:60,y:90},{x:60,y:30}],
+            'o': [{x:50,y:30},{x:30,y:50},{x:50,y:80},{x:70,y:50},{x:50,y:30}],
+            'p': [{x:30,y:10},{x:30,y:110},{x:30,y:50},{x:60,y:30},{x:30,y:50}],
+            'q': [{x:60,y:10},{x:60,y:110},{x:60,y:50},{x:30,y:30},{x:60,y:50}],
+            'r': [{x:30,y:90},{x:30,y:30},{x:30,y:50},{x:60,y:30}],
+            's': [{x:60,y:30},{x:30,y:30},{x:30,y:50},{x:60,y:50},{x:60,y:80},{x:30,y:80}],
+            't': [{x:50,y:10},{x:50,y:90},{x:30,y:50},{x:70,y:50}],
+            'u': [{x:30,y:30},{x:30,y:70},{x:50,y:90},{x:70,y:70},{x:70,y:30}],
+            'v': [{x:30,y:30},{x:50,y:90},{x:70,y:30}],
+            'w': [{x:20,y:30},{x:35,y:90},{x:50,y:30},{x:65,y:90},{x:80,y:30}],
+            'x': [{x:30,y:30},{x:70,y:90},{x:70,y:30},{x:30,y:90}],
+            'y': [{x:30,y:30},{x:50,y:60},{x:70,y:30},{x:50,y:60},{x:50,y:90}],
+            'z': [{x:30,y:30},{x:70,y:30},{x:30,y:90},{x:70,y:90}]
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initCanvas();
+            renderLetterSelector();
+            updateStarDisplay();
+            loadLetter();
+        });
+
+        // 初始化Canvas
+        function initCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * 2;  // 高清屏适配
+            canvas.height = rect.height * 2;
+            ctx.scale(2, 2);
+
+            // 鼠标事件
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            // 触摸事件
+            canvas.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousedown', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+            });
+
+            canvas.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousemove', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+            });
+
+            canvas.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                canvas.dispatchEvent(new MouseEvent('mouseup'));
+            });
+
+            drawGuide();
+        }
+
+        // 渲染字母选择器
+        function renderLetterSelector() {
+            const container = document.getElementById('letterSelector');
+            container.innerHTML = '';
+            alphabetData.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'letter-btn ripple' + (item.letter === currentLetter ? ' active' : '');
+                btn.textContent = currentCase === 'upper' ? item.letter : item.letter.toLowerCase();
+                btn.onclick = () => selectLetter(item.letter);
+                container.appendChild(btn);
+            });
+        }
+
+        // 选择字母
+        function selectLetter(letter) {
+            currentLetter = letter;
+            renderLetterSelector();
+            loadLetter();
+        }
+
+        // 切换大小写
+        function switchCase(caseType) {
+            currentCase = caseType;
+            document.querySelectorAll('.case-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.includes(caseType === 'upper' ? 'A' : 'a'));
+            });
+            renderLetterSelector();
+            loadLetter();
+        }
+
+        // 加载字母
+        function loadLetter() {
+            const letterData = alphabetData.find(item => item.letter === currentLetter);
+            if (!letterData) return;
+
+            const displayLetter = currentCase === 'upper' ? letterData.letter : letterData.letter.toLowerCase();
+            document.getElementById('currentLetter').textContent = displayLetter;
+            document.getElementById('letterInfo').textContent = `${letterData.word} - ${letterData.image}`;
+
+            clearCanvas();
+            drawGuide();
+            score = 0;
+            document.getElementById('scoreValue').textContent = score;
+
+            // 发音
+            if (window.audioManager) {
+                window.audioManager.speakLetter(letterData.letter);
+            }
+        }
+
+        // 开始绘制
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+        }
+
+        // 绘制
+        function draw(e) {
+            if (!isDrawing) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = '#FF6B6B';
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+
+            lastX = x;
+            lastY = y;
+
+            // 增加分数
+            score = Math.min(100, score + 1);
+            document.getElementById('scoreValue').textContent = score;
+        }
+
+        // 停止绘制
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        // 绘制引导线
+        function drawGuide() {
+            if (!showGuide) return;
+
+            ctx.clearRect(0, 0, canvas.width / 2, canvas.height / 2);
+
+            const paths = currentCase === 'upper' 
+                ? (letterPaths[currentLetter] || letterPaths['A'])
+                : (lowerLetterPaths[currentLetter.toLowerCase()] || lowerLetterPaths['a']);
+
+            ctx.strokeStyle = 'rgba(108, 99, 255, 0.3)';
+            ctx.lineWidth = 4;
+            ctx.setLineDash([10, 10]);
+
+            ctx.beginPath();
+            paths.forEach((point, index) => {
+                if (index === 0) {
+                    ctx.moveTo(point.x, point.y);
+                } else {
+                    ctx.lineTo(point.x, point.y);
+                }
+            });
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 绘制起点
+            ctx.fillStyle = '#00D2A0';
+            ctx.beginPath();
+            ctx.arc(paths[0].x, paths[0].y, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 起点文字
+            ctx.fillStyle = '#00D2A0';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('起点', paths[0].x - 15, paths[0].y - 15);
+        }
+
+        // 清除画布
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width / 2, canvas.height / 2);
+            if (showGuide) drawGuide();
+        }
+
+        // 切换引导线
+        function toggleGuide() {
+            showGuide = !showGuide;
+            clearCanvas();
+            if (showGuide) drawGuide();
+        }
+
+        // 检查书写
+        function checkTracing() {
+            if (score < 30) {
+                alert('再试试吧！多写几笔哦~ 💪');
+                if (window.audioManager) window.audioManager.playErrorSound();
+                return;
+            }
+
+            let message = '';
+            let stars = 0;
+
+            if (score >= 90) {
+                message = '太棒了！完美书写！🌟🌟🌟';
+                stars = 10;
+            } else if (score >= 60) {
+                message = '很好！继续加油！🌟🌟';
+                stars = 5;
+            } else {
+                message = '不错！可以更好！🌟';
+                stars = 3;
+            }
+
+            alert(message);
+
+            if (window.storage) {
+                window.storage.addStars(stars);
+                updateStarDisplay();
+            }
+
+            if (window.celebration && score >= 60) {
+                window.celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+            }
+
+            if (window.audioManager) {
+                window.audioManager.playSuccessSound();
+            }
+        }
+
+        // 更新星星显示
+        function updateStarDisplay() {
+            const starCount = document.getElementById('starCount');
+            if (starCount && storage) {
+                starCount.textContent = storage.data.stars;
+            }
+        }
+    </script>
+</body>
+</html>

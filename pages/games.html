@@ -299,6 +299,8 @@
     <script src="../js/data.js"></script>
     <script src="../js/audio.js"></script>
     <script src="../js/storage.js"></script>
+    <script src="../js/celebration.js"></script>
+    <script src="../js/app.js"></script>
     <script>
         // ========== 气球游戏 ==========
         let balloonScore = 0;
@@ -313,7 +315,9 @@
             { name: '听力选择', icon: '👂', desc: '听发音选单词', difficulty: 3, badge: null, id: 'listen' },
             { name: '单词消消乐', icon: '✨', desc: '匹配单词和图片', difficulty: 3, badge: 'NEW', id: 'match' },
             { name: '句子组合', icon: '📝', desc: '拖拽单词组句子', difficulty: 3, badge: 'HOT', id: 'sentence' },
-            { name: '跟读练习', icon: '🎤', desc: '跟读练习评分', difficulty: 2, badge: null, id: 'read' }
+            { name: '跟读练习', icon: '🎤', desc: '跟读练习评分', difficulty: 2, badge: null, id: 'read' },
+            { name: '单词书', icon: '📖', desc: '查询所有单词', difficulty: 1, badge: 'NEW', id: 'wordbook' },
+            { name: '字母书写', icon: '✏️', desc: '练习写字母', difficulty: 2, badge: null, id: 'tracing' }
         ];
 
         // 初始化游戏列表
@@ -354,6 +358,10 @@
                 document.getElementById('balloonGame').style.display = 'block';
                 document.getElementById('balloonGame').classList.add('active');
                 initBalloonGame();
+            } else if (gameId === 'wordbook') {
+                window.location.href = 'wordbook.html';
+            } else if (gameId === 'tracing') {
+                window.location.href = 'letter-tracing.html';
             } else {
                 alert('游戏开发中...');
                 showGamesList();

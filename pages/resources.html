@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习资源 - KidsEnglish Fun</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/games.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .resources-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .resources-intro {
+            text-align: center;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+        }
+
+        .resources-intro h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            animation: bounceIn 1s ease-out;
+        }
+
+        .resources-intro p {
+            font-size: 18px;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-title {
+            font-size: 28px;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 5px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .resource-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .resource-card.cat-songs::before { background: linear-gradient(90deg, #f093fb, #f5576c); }
+        .resource-card.cat-reading::before { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+        .resource-card.cat-phonics::before { background: linear-gradient(90deg, #43e97b, #38f9d7); }
+        .resource-card.cat-games::before { background: linear-gradient(90deg, #fa709a, #fee140); }
+        .resource-card.cat-news::before { background: linear-gradient(90deg, #a18cd1, #fbc2eb); }
+        .resource-card.cat-library::before { background: linear-gradient(90deg, #ffecd2, #fcb69f); }
+
+        .resource-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .resource-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .resource-desc {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .resource-link {
+            display: inline-block;
+            padding: 8px 18px;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 18px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .resource-link:hover {
+            background: #5a67d8;
+            transform: scale(1.05);
+        }
+
+        .tip-box {
+            background: #e7f3ff;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+
+        .tip-box h4 {
+            color: #1565C0;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .tip-box p {
+            color: #1976D2;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .resources-intro h2 {
+                font-size: 28px;
+            }
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">📚</span>
+                <h1>学习资源</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content resources-container">
+            <button class="back-btn" onclick="navigateTo('../index.html')">
+                ← 返回首页
+            </button>
+
+            <!-- 介绍区域 -->
+            <div class="resources-intro">
+                <h2>🌟 精选学习资源</h2>
+                <p>整理自小花生、知乎等平台的优质英语学习网站，绝大部分免费，无需翻墙，家长和孩子都能用！</p>
+            </div>
+
+            <!-- 提示 -->
+            <div class="tip-box">
+                <h4>💡 使用建议</h4>
+                <p>这些资源均为国外优质教育网站，建议在家长陪同下使用。点击链接会在新标签页打开，记得回来继续学习哦！每访问一个资源可获得2颗星星奖励。</p>
+            </div>
+
+            <!-- 一、儿歌动画类 -->
+            <div class="category-section">
+                <h3 class="category-title"><span>🎵</span> 儿歌动画类</h3>
+                <div class="resources-grid">
+                    <div class="resource-card cat-songs">
+                        <span class="resource-icon">🎶</span>
+                        <div class="resource-title">British Council Songs</div>
+                        <div class="resource-desc">60+首儿童英文儿歌，含动画、歌词、练习题，英官方出品</div>
+                        <a href="https://learnenglishkids.britishcouncil.org/listen-watch/songs" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-songs">
+                        <span class="resource-icon">🐣</span>
+                        <div class="resource-title">Mother Goose Club</div>
+                        <div class="resource-desc">经典鹅妈妈童谣，动画+歌曲，适合低龄儿童</div>
+                        <a href="http://www.mothergooseclub.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-songs">
+                        <span class="resource-icon">🎈</span>
+                        <div class="resource-title">Super Simple Learning</div>
+                        <div class="resource-desc">Super Simple Songs 出品，简单易懂的儿歌视频</div>
+                        <a href="http://supersimplelearning.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-songs">
+                        <span class="resource-icon">📻</span>
+                        <div class="resource-title">Kididdles</div>
+                        <div class="resource-desc">儿童歌曲库，可下载音频，带歌词和吉他谱</div>
+                        <a href="https://www.kididdles.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 二、综合学习类 -->
+            <div class="category-section">
+                <h3 class="category-title"><span>🌐</span> 综合学习类</h3>
+                <div class="resources-grid">
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">🇬🇧</span>
+                        <div class="resource-title">British Council LearnEnglish Kids</div>
+                        <div class="resource-desc">英国文化协会官方儿童英语学习网站，内容超多</div>
+                        <a href="https://learnenglishkids.britishcouncil.org/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">📖</span>
+                        <div class="resource-title">Kizclub</div>
+                        <div class="resource-desc">丰富的英文绘本、Flashcards、手工活动资源</div>
+                        <a href="http://www.kizclub.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">📺</span>
+                        <div class="resource-title">PBS Kids</div>
+                        <div class="resource-desc">美国公共电视台儿童频道，动画+游戏+互动</div>
+                        <a href="http://pbskids.org/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">🇬🇧</span>
+                        <div class="resource-title">CBeebies (BBC)</div>
+                        <div class="resource-desc">英国BBC旗下儿童频道，高质量动画和学习资源</div>
+                        <a href="http://www.bbc.co.uk/cbeebies/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">📱</span>
+                        <div class="resource-title">Nick Jr.</div>
+                        <div class="resource-desc">美国尼克儿童频道，海绵宝宝等经典动画</div>
+                        <a href="http://www.nickjr.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 三、绘本阅读类 -->
+            <div class="category-section">
+                <h3 class="category-title"><span>📚</span> 绘本阅读类</h3>
+                <div class="resources-grid">
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">📘</span>
+                        <div class="resource-title">Inkless Tales</div>
+                        <div class="resource-desc">有声动画故事书，适合小宝宝，有声音有动画</div>
+                        <a href="https://www.inklesstales.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">📗</span>
+                        <div class="resource-title">Nellie Edge Free Books</div>
+                        <div class="resource-desc">适合初学者的免费小书，可打印制作成书</div>
+                        <a href="https://nellieedge.com/free-little-books/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">📙</span>
+                        <div class="resource-title">Lil-Fingers</div>
+                        <div class="resource-desc">带声音和动画的在线故事，适合学龄前儿童</div>
+                        <a href="https://www.lil-fingers.com/story/index.html" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">📕</span>
+                        <div class="resource-title">Clarkness</div>
+                        <div class="resource-desc">大量免费分级读物，可在线阅读或下载</div>
+                        <a href="https://www.clarkness.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">🔊</span>
+                        <div class="resource-title">Light Up Your Brain</div>
+                        <div class="resource-desc">有声故事书，可在线听或下载音频</div>
+                        <a href="https://lightupyourbrain.com/stories/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-reading">
+                        <span class="resource-icon">🎧</span>
+                        <div class="resource-title">Audible (亚马逊)</div>
+                        <div class="resource-desc">亚马逊有声书平台，有大量儿童有声书</div>
+                        <a href="https://www.audible.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 四、自然拼读类 -->
+            <div class="category-section">
+                <h3 class="category-title"><span>🔤</span> 自然拼读类</h3>
+                <div class="resources-grid">
+                    <div class="resource-card cat-phonics">
+                        <span class="resource-icon">⭐</span>
+                        <div class="resource-title">Starfall</div>
+                        <div class="resource-desc">美国知名自然拼读学习网站，游戏化教学</div>
+                        <a href="http://starfall.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-phonics">
+                        <span class="resource-icon">🎯</span>
+                        <div class="resource-title">ABC Fast Phonics</div>
+                        <div class="resource-desc">系统的自然拼读在线教程，免费且全面</div>
+                        <a href="http://abcfastphonics.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-phonics">
+                        <span class="resource-icon">📝</span>
+                        <div class="resource-title">Quiz Tree - Phonics</div>
+                        <div class="resource-desc">互动式自然拼读练习，含测验</div>
+                        <a href="http://quiz-tree.com/phonics.html" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 五、新闻阅读类（大孩子） -->
+            <div class="category-section">
+                <h3 class="category-title"><span>📰</span> 新闻阅读类（适合大孩子）</h3>
+                <div class="resources-grid">
+                    <div class="resource-card cat-news">
+                        <span class="resource-icon">📰</span>
+                        <div class="resource-title">Newsela</div>
+                        <div class="resource-desc">分级新闻阅读平台，可按难度调整文章</div>
+                        <a href="https://newsela.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-news">
+                        <span class="resource-icon">⏰</span>
+                        <div class="resource-title">Time for Kids</div>
+                        <div class="resource-desc">《时代》杂志儿童版，适合小学生的新闻</div>
+                        <a href="https://www.timeforkids.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-news">
+                        <span class="resource-icon">📱</span>
+                        <div class="resource-title">News-O-Matic</div>
+                        <div class="resource-desc">专为K-8学生设计的每日新闻，有音频</div>
+                        <a href="https://www.newsomatic.org/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-news">
+                        <span class="resource-icon">🌍</span>
+                        <div class="resource-title">Youngzine</div>
+                        <div class="resource-desc">儿童新闻杂志，涵盖科学、世界、时事</div>
+                        <a href="https://youngzine.org/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 六、图书馆类 -->
+            <div class="category-section">
+                <h3 class="category-title"><span>🏛️</span> 线上图书馆</h3>
+                <div class="resources-grid">
+                    <div class="resource-card cat-library">
+                        <span class="resource-icon">🌍</span>
+                        <div class="resource-title">International Children's Digital Library</div>
+                        <div class="resource-desc">国际儿童数字图书馆，免费在线阅读各国儿童书籍</div>
+                        <a href="http://www.childrenslibrary.org/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-library">
+                        <span class="resource-icon">🏠</span>
+                        <div class="resource-title">Annie Kids Library (安妮图书馆)</div>
+                        <div class="resource-desc">国内知名英文图书馆，有线上资源</div>
+                        <a href="http://www.anniekids.org" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-library">
+                        <span class="resource-icon">🎒</span>
+                        <div class="resource-title">Making Learning Fun</div>
+                        <div class="resource-desc">大量绘本配套活动可下载，含打印素材</div>
+                        <a href="http://makinglearningfun.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 七、其他优质资源 -->
+            <div class="category-section">
+                <h3 class="category-title"><span>✨</span> 其他优质资源</h3>
+                <div class="resources-grid">
+                    <div class="resource-card cat-games">
+                        <span class="resource-icon">🤖</span>
+                        <div class="resource-title">StoryBots</div>
+                        <div class="resource-desc">Netflix出品，STEM+英语启蒙动画，超赞！</div>
+                        <a href="https://www.storybots.com" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-games">
+                        <span class="resource-icon">🎮</span>
+                        <div class="resource-title">ABCya!</div>
+                        <div class="resource-desc">K-5年级游戏化学习，含阅读、数学等</div>
+                        <a href="http://abcya.com" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-games">
+                        <span class="resource-icon">🎨</span>
+                        <div class="resource-title">Buggy and Buddy</div>
+                        <div class="resource-desc">儿童手工、活动、学习资源博客</div>
+                        <a href="http://buggyandbuddy.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                    <div class="resource-card cat-games">
+                        <span class="resource-icon">👶</span>
+                        <div class="resource-title">Cullen's ABCs</div>
+                        <div class="resource-desc">针对幼儿的视频和活动资源</div>
+                        <a href="https://cullensabcs.com/" target="_blank" class="resource-link" onclick="addStar()">访问网站 →</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/storage.js"></script>
+    <script>
+        // 更新星星显示
+        function updateStarDisplay() {
+            const starCount = document.getElementById('starCount');
+            if (starCount && storage) {
+                starCount.textContent = storage.data.stars;
+            }
+        }
+
+        // 增加星星
+        function addStar() {
+            if (storage) {
+                storage.addStars(2);
+                setTimeout(updateStarDisplay, 100);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStarDisplay();
+        });
+    </script>
+
+    <script>
+    // 注册 Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            const swPath = location.pathname.includes('/pages/') ? '../sw.js' : './sw.js';
+            navigator.serviceWorker.register(swPath)
+                .then(reg => console.log('SW registered:', reg))
+                .catch(err => console.log('SW failed:', err));
+        });
+    }
+    </script>
+</body>
+</html>

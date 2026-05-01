@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿歌听唱 - KidsEnglish Fun</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/games.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .songs-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .songs-intro {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .songs-intro h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            animation: bounceIn 1s ease-out;
+        }
+
+        .songs-intro p {
+            font-size: 18px;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 24px;
+            border: 3px solid var(--primary-color);
+            border-radius: 25px;
+            background: white;
+            color: var(--primary-color);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .songs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .song-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .song-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .song-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        }
+
+        .song-icon {
+            font-size: 52px;
+            margin-bottom: 15px;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .song-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .song-desc {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .song-link {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .song-link:hover {
+            background: #5a67d8;
+            transform: scale(1.05);
+        }
+
+        .tip-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+
+        .tip-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .tip-box p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .songs-intro h2 {
+                font-size: 28px;
+            }
+            .songs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">🎵</span>
+                <h1>儿歌听唱</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content songs-container">
+            <button class="back-btn" onclick="navigateTo('../index.html')">
+                ← 返回首页
+            </button>
+
+            <!-- 介绍区域 -->
+            <div class="songs-intro">
+                <h2>🎶 英文儿歌乐园</h2>
+                <p>精选 British Council 优质儿歌，帮助孩子在欢快的旋律中学习英语，磨耳朵、练发音、培养语感！</p>
+            </div>
+
+            <!-- 提示 -->
+            <div class="tip-box">
+                <h4>💡 使用提示</h4>
+                <p>点击歌曲卡片可以访问 British Council 官网，观看动画、听歌曲、下载练习题。建议在家长陪同下使用，效果更佳！</p>
+            </div>
+
+            <!-- 分类筛选 -->
+            <div class="category-filter">
+                <button class="filter-btn active" onclick="filterSongs('all', this)">全部</button>
+                <button class="filter-btn" onclick="filterSongs('animals', this)">动物</button>
+                <button class="filter-btn" onclick="filterSongs('numbers', this)">数字</button>
+                <button class="filter-btn" onclick="filterSongs('alphabet', this)">字母</button>
+                <button class="filter-btn" onclick="filterSongs('action', this)">动作</button>
+                <button class="filter-btn" onclick="filterSongs('holiday', this)">节日</button>
+            </div>
+
+            <!-- 歌曲网格 -->
+            <div class="songs-grid" id="songsGrid">
+                <!-- 动态生成 -->
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/storage.js"></script>
+    <script>
+        // 歌曲数据
+        const songsData = [
+            { title: "The Alphabet Song", desc: "经典字母歌，轻松记住26个字母", icon: "🔤", cat: "alphabet", url: "https://learnenglishkids.britishcouncil.org/songs/alphabet-song" },
+            { title: "The ABC Fruity Band", desc: "水果主题的字母歌，趣味十足", icon: "🍎", cat: "alphabet", url: "https://learnenglishkids.britishcouncil.org/songs/abc-fruity-band" },
+            { title: "Old MacDonald", desc: "老麦当劳有农场，认识各种动物", icon: "🚜", cat: "animals", url: "https://learnenglishkids.britishcouncil.org/songs/old-macdonald-had-farm" },
+            { title: "Animal House", desc: "走进动物之家，学动物名称", icon: "🏠", cat: "animals", url: "https://learnenglishkids.britishcouncil.org/songs/animal-house" },
+            { title: "Dinosaur 1-10", desc: "跟着恐龙学数数1到10", icon: "🦕", cat: "numbers", url: "https://learnenglishkids.britishcouncil.org/songs/dinosaur-1-10" },
+            { title: "Ten Little Aeroplanes", desc: "十架小飞机，快乐学数字", icon: "✈️", cat: "numbers", url: "https://learnenglishkids.britishcouncil.org/songs/ten-little-aeroplanes" },
+            { title: "Ten Shiny Coins", desc: "十枚闪亮硬币，认识数字", icon: "🪙", cat: "numbers", url: "https://learnenglishkids.britishcouncil.org/songs/ten-shiny-coins" },
+            { title: "Incy Wincy Spider", desc: "小蜘蛛爬水管，经典儿歌", icon: "🕷️", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/incy-wincy-spider" },
+            { title: "The Wheels on the Bus", desc: "巴士轮子转啊转，学交通工具", icon: "🚌", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/wheels-bus" },
+            { title: "If You're Happy", desc: "如果你快乐，就拍拍手", icon: "😊", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/if-youre-happy-you-know-it" },
+            { title: "Head, Shoulders, Knees and Toes", desc: "头肩膝盖脚趾，学身体部位", icon: "🏃", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/head-shoulders-knees-toes" },
+            { title: "I Can Run", desc: "我会跑，学动作词汇", icon: "🏃", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/i-can-run" },
+            { title: "Brush Bus", desc: "刷牙巴士，养成好习惯", icon: "🪥", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/brush-bus" },
+            { title: "Twinkle Twinkle Little Star", desc: "一闪一闪小星星，经典童谣", icon: "⭐", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/twinkle-twinkle-little-star" },
+            { title: "The Hokey Cokey", desc: "集体舞歌曲，学身体部位", icon: "💃", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/hokey-cokey" },
+            { title: "Hello, Hello, Hello", desc: "打招呼歌，学问候语", icon: "👋", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/hello-hello-hello" },
+            { title: "We're Going to the Zoo", desc: "去动物园，认识更多动物", icon: "🦁", cat: "animals", url: "https://learnenglishkids.britishcouncil.org/songs/were-going-zoo" },
+            { title: "A Bear Named Sue", desc: "名叫Sue的熊，有趣故事歌", icon: "🐻", cat: "animals", url: "https://learnenglishkids.britishcouncil.org/songs/bear-named-sue" },
+            { title: "The Scary Skeleton", desc: "可怕的骷髅，万圣节歌曲", icon: "💀", cat: "holiday", url: "https://learnenglishkids.britishcouncil.org/songs/scary-skeleton" },
+            { title: "Happy New Year", desc: "新年快乐，节日祝福歌", icon: "🎉", cat: "holiday", url: "https://learnenglishkids.britishcouncil.org/songs/happy-new-year" },
+            { title: "Santa, Santa, High in the Sky", desc: "圣诞老人飞高高，圣诞歌曲", icon: "🎅", cat: "holiday", url: "https://learnenglishkids.britishcouncil.org/songs/santa-santa-high-sky" },
+            { title: "We're Going to Win", desc: "我们要赢，运动励志歌", icon: "🏆", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/were-going-win" },
+            { title: "Monster Bop", desc: "怪物舞会，趣味舞蹈歌", icon: "👾", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/monster-bop" },
+            { title: "Pizza and Chips", desc: "披萨和薯条，学食物名称", icon: "🍕", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/pizza-chips" },
+            { title: "I Can Sing a Rainbow", desc: "我会唱彩虹，学颜色词汇", icon: "🌈", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/i-can-sing-rainbow" },
+            { title: "Chocolate Cake", desc: "巧克力蛋糕，学食物词汇", icon: "🍰", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/chocolate-cake" },
+            { title: "The River", desc: "河流之歌，认识自然", icon: "🏞️", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/river" },
+            { title: "An Old Lady Who Swallowed a Fly", desc: "吞苍蝇的老太太，幽默故事歌", icon: "🦟", cat: "animals", url: "https://learnenglishkids.britishcouncil.org/songs/old-lady-who-swallowed-fly" },
+            { title: "Over the Mountains", desc: "翻过大山，学地理词汇", icon: "⛰️", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/over-mountains" },
+            { title: "Flying from the Sun to the Stars", desc: "从太阳飞到星星，太空主题", icon: "🚀", cat: "action", url: "https://learnenglishkids.britishcouncil.org/songs/flying-sun-stars" }
+        ];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSongs('all');
+            updateStarDisplay();
+        });
+
+        // 渲染歌曲
+        function renderSongs(category) {
+            const grid = document.getElementById('songsGrid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+            const filtered = category === 'all' ? songsData : songsData.filter(s => s.cat === category);
+
+            filtered.forEach(song => {
+                const card = document.createElement('div');
+                card.className = 'song-card ripple';
+                card.innerHTML = `
+                    <span class="song-icon">${song.icon}</span>
+                    <div class="song-title">${song.title}</div>
+                    <div class="song-desc">${song.desc}</div>
+                    <a href="${song.url}" target="_blank" class="song-link" onclick="addStar()">去听歌 →</a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 筛选歌曲
+        function filterSongs(category, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderSongs(category);
+        }
+
+        // 增加星星
+        function addStar() {
+            if (storage) {
+                storage.addStars(2);
+                updateStarDisplay();
+            }
+        }
+
+        // 更新星星显示
+        function updateStarDisplay() {
+            const starCount = document.getElementById('starCount');
+            if (starCount && storage) {
+                starCount.textContent = storage.data.stars;
+            }
+        }
+    </script>
+
+    <script>
+    // 注册 Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            const swPath = location.pathname.includes('/pages/') ? '../sw.js' : './sw.js';
+            navigator.serviceWorker.register(swPath)
+                .then(reg => console.log('SW registered:', reg))
+                .catch(err => console.log('SW failed:', err));
+        });
+    }
+    </script>
+</body>
+</html>

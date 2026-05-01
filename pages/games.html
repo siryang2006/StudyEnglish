@@ -393,6 +393,7 @@
     <script src="../js/audio.js"></script>
     <script src="../js/storage.js"></script>
     <script src="../js/celebration.js"></script>
+    <script src="../js/gameFx.js"></script>
     <script src="../js/app.js"></script>
     <script>
         // ========== 气球游戏 ==========
@@ -406,11 +407,13 @@
             { name: '气球单词', icon: '🎈', desc: '点击正确单词气球', difficulty: 2, badge: 'HOT', id: 'balloon' },
             { name: '拼图单词', icon: '🧩', desc: '拖动字母拼单词', difficulty: 2, badge: null, id: 'puzzle' },
             { name: '听力选择', icon: '👂', desc: '听发音选单词', difficulty: 3, badge: null, id: 'listen' },
-            { name: '单词消消乐', icon: '✨', desc: '匹配单词和图片', difficulty: 3, badge: 'NEW', id: 'match' },
+            { name: '单词消消乐', icon: '✨', desc: '匹配单词和图片', difficulty: 3, badge: null, id: 'match' },
             { name: '单词转盘', icon: '🎡', desc: '转盘学单词赢星星', difficulty: 1, badge: 'NEW', id: 'wheel' },
+            { name: '飞机大战', icon: '✈️', desc: '射击正确的单词', difficulty: 2, badge: 'NEW', id: 'plane' },
+            { name: '单词搬运工', icon: '🤖', desc: '搬运单词组句子', difficulty: 2, badge: 'NEW', id: 'carrier' },
             { name: '句子组合', icon: '📝', desc: '拖拽单词组句子', difficulty: 3, badge: 'HOT', id: 'sentence' },
             { name: '跟读练习', icon: '🎤', desc: '跟读练习评分', difficulty: 2, badge: null, id: 'read' },
-            { name: '单词书', icon: '📖', desc: '查询所有单词', difficulty: 1, badge: 'NEW', id: 'wordbook' },
+            { name: '单词书', icon: '📖', desc: '查询所有单词', difficulty: 1, badge: null, id: 'wordbook' },
             { name: '字母书写', icon: '✏️', desc: '练习写字母', difficulty: 2, badge: null, id: 'tracing' }
         ];
 
@@ -482,6 +485,10 @@
                 window.location.href = 'wordbook.html';
             } else if (gameId === 'tracing') {
                 window.location.href = 'letter-tracing.html';
+            } else if (gameId === 'plane') {
+                window.location.href = 'plane-words.html';
+            } else if (gameId === 'carrier') {
+                window.location.href = 'word-carrier.html';
             } else if (gameId === 'sentence') {
                 document.getElementById('sentenceGame').style.display = 'block';
                 document.getElementById('sentenceGame').classList.add('active');

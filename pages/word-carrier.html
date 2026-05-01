@@ -154,6 +154,13 @@
         }
         .complete-panel h2 { font-size: 28px; }
         .complete-panel .big-score { font-size: 56px; font-weight: bold; color: #FFD93D; }
+        @media (max-width: 480px) {
+            .sentence-display { font-size: 18px; line-height: 2; }
+            .belt-word { padding: 10px 14px; font-size: 15px; }
+            .robot { font-size: 40px; }
+            .game-hud { padding: 8px 12px; }
+            .hud-item .val { font-size: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -212,6 +219,7 @@
     <script src="../js/audio.js"></script>
     <script src="../js/storage.js"></script>
     <script src="../js/celebration.js"></script>
+    <script src="../js/gameFx.js"></script>
     <script src="../js/app.js"></script>
     <script>
         var sentences = [
@@ -354,6 +362,7 @@
                     setTimeout(function() { document.getElementById('robot').classList.remove('happy'); }, 500);
 
                     if (window.celebration) celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+                    if (window.gameFx) gameFx.comboEffect(combo, window.innerWidth/2, window.innerHeight/2);
                     if (window.audioManager) audioManager.speakSentence(currentSentence.en.join(' '));
 
                     document.getElementById('nextBtn').style.display = 'block';
@@ -387,6 +396,7 @@
             if (window.storage) storage.addStars(starsEarned);
             updateStarDisplay();
             if (window.celebration) celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+            if (window.gameFx) gameFx.superImpact(window.innerWidth/2, window.innerHeight/2);
         }
 
         function nextLevel() {

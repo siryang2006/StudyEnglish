@@ -24,6 +24,14 @@
         .score-item .label { font-size: 13px; opacity: 0.9; }
         .wheel-wrapper {
             position: relative; width: 320px; height: 320px; margin: 20px auto;
+            perspective: 800px;
+        }
+        .wheel-wrapper canvas {
+            transition: transform 0.3s;
+            transform: rotateX(8deg);
+        }
+        .wheel-wrapper:hover canvas {
+            transform: rotateX(2deg);
         }
         .wheel-pointer {
             position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
@@ -96,6 +104,18 @@
             padding: 6px 16px; border-radius: 20px; color: white;
             font-weight: bold; font-size: 14px; margin: 10px 0;
         }
+        @media (max-width: 480px) {
+            .wheel-wrapper { width: 260px; height: 260px; }
+            .wheel-wrapper canvas { width: 260px !important; height: 260px !important; }
+            .score-bar { padding: 10px; }
+            .score-item .num { font-size: 22px; }
+            .result-word { font-size: 28px; }
+            .result-emoji { font-size: 56px; }
+            .quiz-options { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .quiz-opt { padding: 10px; font-size: 15px; }
+            .cat-tab { padding: 6px 12px; font-size: 12px; }
+            .spin-btn { padding: 12px 36px; font-size: 17px; }
+        }
     </style>
 </head>
 <body>
@@ -156,6 +176,7 @@
     <script src="../js/audio.js"></script>
     <script src="../js/storage.js"></script>
     <script src="../js/celebration.js"></script>
+    <script src="../js/gameFx.js"></script>
     <script src="../js/app.js"></script>
     <script>
         var wheelAngle = 0, spinning = false;
@@ -323,6 +344,7 @@
                 var starReward = combo >= 5 ? 8 : combo >= 3 ? 5 : 3;
                 if (window.storage) storage.addStars(starReward);
                 if (window.celebration) celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+                if (window.gameFx) gameFx.comboEffect(combo, window.innerWidth/2, window.innerHeight/2);
             } else {
                 btn.classList.add('wrong');
                 btns.forEach(function(b) { if (b.textContent === correct) b.classList.add('correct'); });
@@ -330,6 +352,7 @@
                 feedback.textContent = '❌ 正确答案是：' + correct;
                 feedback.style.color = '#ff6b6b';
                 if (window.audioManager) audioManager.playErrorSound();
+                if (window.gameFx) gameFx.shake(6, 200);
             }
 
             document.getElementById('resChinese').textContent = currentWord.chinese;

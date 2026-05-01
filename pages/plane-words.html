@@ -24,6 +24,18 @@
             border-radius: 15px; overflow: hidden; touch-action: none;
             user-select: none; -webkit-user-select: none;
         }
+        @media (max-width: 480px) {
+            .game-area { height: 400px; }
+            .game-hud { padding: 8px 10px; }
+            .hud-item .val { font-size: 18px; }
+            .plane { font-size: 32px; bottom: 20px; }
+            .word-enemy { font-size: 15px; padding: 6px 12px; }
+            .question-bar .q-emoji { font-size: 22px; }
+            .question-bar .q-text { font-size: 14px; }
+        }
+        @media (min-width: 768px) {
+            .game-area { height: 600px; }
+        }
         .star-bg {
             position: absolute; width: 2px; height: 2px; background: white;
             border-radius: 50%; opacity: 0.6;
@@ -177,6 +189,7 @@
     <script src="../js/audio.js"></script>
     <script src="../js/storage.js"></script>
     <script src="../js/celebration.js"></script>
+    <script src="../js/gameFx.js"></script>
     <script src="../js/app.js"></script>
     <script>
         var area, plane, planeX, areaW, areaH;
@@ -352,6 +365,9 @@
         }
 
         function hitEnemy(e, idx) {
+            var rect = area.getBoundingClientRect();
+            var screenX = rect.left + e.x;
+            var screenY = rect.top + e.y;
             if (e.isCorrect) {
                 combo++;
                 var pts = 10 + combo * 2;
@@ -359,6 +375,7 @@
                 showExplosion(e.x, e.y, '💥');
                 showScorePopup(e.x, e.y, '+' + pts);
                 if (window.audioManager) audioManager.playSuccessSound();
+                if (window.gameFx) gameFx.comboEffect(combo, screenX, screenY);
                 if (combo >= 5 && window.celebration) celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
                 pickQuestion();
             } else {
@@ -367,6 +384,7 @@
                 showExplosion(e.x, e.y, '💔');
                 showScorePopup(e.x, e.y, '错误!');
                 if (window.audioManager) audioManager.playErrorSound();
+                if (window.gameFx) gameFx.shake(12, 300);
                 if (lives <= 0) { e.el.remove(); enemies.splice(idx, 1); updateHUD(); endGame(); return; }
             }
             e.el.remove(); enemies.splice(idx, 1);
@@ -394,6 +412,7 @@
         function endGame() {
             gameRunning = false;
             if (animId) cancelAnimationFrame(animId);
+            if (window.gameFx) gameFx.superImpact(window.innerWidth/2, window.innerHeight/2);
             var stars = Math.floor(score / 10);
             if (window.storage) storage.addStars(stars);
             updateStarDisplay();

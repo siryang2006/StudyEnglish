@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>转盘游戏 - KidsEnglish Fun</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/celebration.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .wheel-container { padding: 20px; max-width: 700px; margin: 0 auto; text-align: center; }
+        .wheel-card {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px;
+        }
+        .score-bar {
+            display: flex; justify-content: space-around; margin: 15px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px; padding: 15px; color: white;
+        }
+        .score-item { text-align: center; }
+        .score-item .num { font-size: 28px; font-weight: bold; }
+        .score-item .label { font-size: 13px; opacity: 0.9; }
+        .wheel-wrapper {
+            position: relative; width: 320px; height: 320px; margin: 20px auto;
+        }
+        .wheel-pointer {
+            position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+            font-size: 34px; z-index: 2;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .wheel-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            width: 56px; height: 56px; border-radius: 50%;
+            background: white; border: 3px solid #667eea;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: #667eea; font-size: 15px; cursor: pointer;
+            z-index: 2; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        .wheel-center:hover { transform: translate(-50%,-50%) scale(1.1); }
+        .spin-btn {
+            margin-top: 15px; padding: 16px 50px; border: none; border-radius: 30px;
+            background: linear-gradient(135deg, #ff9a56, #ff6b6b);
+            color: white; font-size: 20px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s; box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+        }
+        .spin-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255,107,107,0.4); }
+        .spin-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+        .result-panel {
+            display: none; background: white; border-radius: 20px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 20px;
+            animation: bounceIn 0.5s;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .result-emoji { font-size: 72px; margin: 10px 0; }
+        .result-word { font-size: 36px; font-weight: bold; color: var(--text-dark); }
+        .result-phonetic { font-size: 18px; color: var(--text-light); margin: 5px 0; }
+        .result-chinese { font-size: 20px; color: var(--primary-color); margin: 5px 0; display: none; }
+        .speak-btn {
+            padding: 12px 30px; border: none; border-radius: 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; font-size: 18px; cursor: pointer; margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        .speak-btn:hover { transform: scale(1.05); }
+        .quiz-options {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            margin: 15px 0; max-width: 400px; margin-left: auto; margin-right: auto;
+        }
+        .quiz-opt {
+            padding: 14px; border: 3px solid #e0e0e0; border-radius: 15px;
+            background: white; font-size: 17px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-opt:hover { border-color: var(--primary-color); transform: translateY(-2px); }
+        .quiz-opt.correct { background: #43e97b; color: white; border-color: #43e97b; }
+        .quiz-opt.wrong { background: #ff6b6b; color: white; border-color: #ff6b6b; }
+        .quiz-feedback { font-size: 20px; font-weight: bold; margin: 10px 0; min-height: 30px; }
+        .category-tabs {
+            display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 15px 0;
+        }
+        .cat-tab {
+            padding: 8px 16px; border: 2px solid #e0e0e0; border-radius: 20px;
+            background: white; font-size: 14px; cursor: pointer; transition: all 0.3s;
+        }
+        .cat-tab.active { border-color: #667eea; background: #667eea; color: white; }
+        .streak-info {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: linear-gradient(135deg, #FFD93D, #ff9a56);
+            padding: 6px 16px; border-radius: 20px; color: white;
+            font-weight: bold; font-size: 14px; margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">🎡</span>
+                <h1>转盘游戏</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content wheel-container">
+            <button class="back-btn" onclick="navigateTo('../index.html')">← 返回首页</button>
+
+            <div class="score-bar">
+                <div class="score-item"><div class="num" id="totalScore">0</div><div class="label">总分</div></div>
+                <div class="score-item"><div class="num" id="correctCount">0</div><div class="label">答对</div></div>
+                <div class="score-item"><div class="num" id="roundCount">0</div><div class="label">轮次</div></div>
+            </div>
+
+            <div class="category-tabs" id="catTabs"></div>
+
+            <div class="wheel-card">
+                <h2 style="margin-bottom:5px;">🎡 转动转盘学单词</h2>
+                <p style="color:var(--text-light);margin-bottom:10px;">转到哪个就学哪个，答对赢星星！</p>
+                <div id="streakBadge" class="streak-info" style="display:none;">🔥 连对 <span id="comboCount">0</span> 题！</div>
+                <div class="wheel-wrapper">
+                    <div class="wheel-pointer">📍</div>
+                    <canvas id="wheelCanvas" width="320" height="320" style="width:320px;height:320px;"></canvas>
+                    <div class="wheel-center" onclick="doSpin()">GO</div>
+                </div>
+                <button class="spin-btn" id="spinBtn" onclick="doSpin()">转一转！</button>
+            </div>
+
+            <div class="result-panel" id="resultPanel">
+                <div class="result-emoji" id="resEmoji"></div>
+                <div class="result-word" id="resWord"></div>
+                <div class="result-phonetic" id="resPhonetic"></div>
+                <div class="result-chinese" id="resChinese"></div>
+                <div>
+                    <button class="speak-btn" onclick="speakCurrent()">🔊 听发音</button>
+                    <button class="speak-btn" onclick="speakCurrentSlow()" style="background:linear-gradient(135deg,#43e97b,#38f9d7);">🐢 慢速</button>
+                </div>
+                <p style="color:var(--text-dark);font-size:16px;margin:15px 0 5px;">选择正确的中文意思：</p>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/audio.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/celebration.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        var wheelAngle = 0, spinning = false;
+        var wheelWords = [], currentWord = null;
+        var totalScore = 0, correctNum = 0, roundNum = 0, combo = 0;
+        var currentCat = 'all';
+        var allWordPool = [];
+        var colors = ['#FF6B6B','#4ECDC4','#45B7D1','#96E6A1','#DDA0DD','#FFD93D','#FF9A56','#667eea','#f093fb','#43e97b'];
+
+        function shuffle(arr) {
+            for (var i = arr.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+            }
+            return arr;
+        }
+
+        function buildPool() {
+            allWordPool = [];
+            if (currentCat === 'all') {
+                Object.keys(wordCategories).forEach(function(cat) {
+                    wordCategories[cat].words.forEach(function(w) { allWordPool.push(w); });
+                });
+            } else {
+                wordCategories[currentCat].words.forEach(function(w) { allWordPool.push(w); });
+            }
+        }
+
+        function pickWheelWords() {
+            var pool = shuffle(allWordPool.slice());
+            wheelWords = pool.slice(0, Math.min(8, pool.length));
+        }
+
+        function initCatTabs() {
+            var tabs = document.getElementById('catTabs');
+            var btn = document.createElement('button');
+            btn.className = 'cat-tab active'; btn.textContent = '全部';
+            btn.onclick = function() { switchCat('all', btn); };
+            tabs.appendChild(btn);
+            Object.keys(wordCategories).forEach(function(cat) {
+                var b = document.createElement('button');
+                b.className = 'cat-tab';
+                b.textContent = wordCategories[cat].icon + ' ' + wordCategories[cat].name;
+                b.onclick = function() { switchCat(cat, b); };
+                tabs.appendChild(b);
+            });
+        }
+
+        function switchCat(cat, btn) {
+            currentCat = cat;
+            document.querySelectorAll('.cat-tab').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            buildPool(); pickWheelWords(); drawWheel();
+            document.getElementById('resultPanel').style.display = 'none';
+        }
+
+        function drawWheel() {
+            var canvas = document.getElementById('wheelCanvas');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var cx = 160, cy = 160, r = 148;
+            var n = wheelWords.length; if (n === 0) return;
+            var arc = (Math.PI * 2) / n;
+            ctx.clearRect(0, 0, 320, 320);
+
+            for (var i = 0; i < n; i++) {
+                var angle = wheelAngle + arc * i;
+                ctx.beginPath(); ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, angle, angle + arc);
+                ctx.closePath();
+                ctx.fillStyle = colors[i % colors.length]; ctx.fill();
+                ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 2; ctx.stroke();
+
+                ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle + arc / 2);
+                ctx.fillStyle = 'white';
+                ctx.font = '26px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(wheelWords[i].image, r * 0.58, -4);
+                ctx.font = 'bold 13px sans-serif';
+                ctx.fillText(wheelWords[i].word, r * 0.58, 16);
+                ctx.restore();
+            }
+
+            ctx.beginPath(); ctx.arc(cx, cy, 24, 0, Math.PI * 2);
+            ctx.fillStyle = 'white'; ctx.fill();
+            ctx.strokeStyle = '#667eea'; ctx.lineWidth = 2; ctx.stroke();
+        }
+
+        function doSpin() {
+            if (spinning || wheelWords.length === 0) return;
+            spinning = true;
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('resultPanel').style.display = 'none';
+
+            var n = wheelWords.length;
+            var arc = (Math.PI * 2) / n;
+            var targetIdx = Math.floor(Math.random() * n);
+            var spins = 5 + Math.random() * 4;
+            var targetAngle = -(targetIdx * arc + arc / 2) + Math.PI * 2 * spins;
+            var startAngle = wheelAngle;
+            var startTime = null, duration = 4500;
+
+            function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
+            function animate(ts) {
+                if (!startTime) startTime = ts;
+                var progress = Math.min((ts - startTime) / duration, 1);
+                wheelAngle = startAngle + targetAngle * easeOut(progress);
+                drawWheel();
+                if (progress < 1) { requestAnimationFrame(animate); }
+                else {
+                    spinning = false;
+                    document.getElementById('spinBtn').disabled = false;
+                    currentWord = wheelWords[targetIdx];
+                    roundNum++;
+                    document.getElementById('roundCount').textContent = roundNum;
+                    showResult(targetIdx);
+                }
+            }
+            if (window.audioManager) audioManager.playClickSound();
+            requestAnimationFrame(animate);
+        }
+
+        function showResult(idx) {
+            var w = wheelWords[idx];
+            var panel = document.getElementById('resultPanel');
+            panel.style.display = 'block';
+            document.getElementById('resEmoji').textContent = w.image;
+            document.getElementById('resWord').textContent = w.word;
+            document.getElementById('resPhonetic').textContent = w.phonetic || '';
+            document.getElementById('resChinese').style.display = 'none';
+            document.getElementById('quizFeedback').textContent = '';
+
+            if (window.audioManager) audioManager.speakWord(w.word);
+
+            var distractors = allWordPool.filter(function(x) { return x.word !== w.word; });
+            distractors = shuffle(distractors);
+            var opts = distractors.slice(0, 3).map(function(x) { return x.chinese; });
+            opts.push(w.chinese);
+            opts = shuffle(opts);
+
+            var container = document.getElementById('quizOptions');
+            container.innerHTML = '';
+            opts.forEach(function(opt) {
+                var btn = document.createElement('button');
+                btn.className = 'quiz-opt';
+                btn.textContent = opt;
+                btn.onclick = function() { checkAnswer(opt, w.chinese, btn); };
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, correct, btn) {
+            var btns = document.querySelectorAll('.quiz-opt');
+            btns.forEach(function(b) { b.onclick = null; b.style.cursor = 'default'; });
+            var feedback = document.getElementById('quizFeedback');
+
+            if (selected === correct) {
+                btn.classList.add('correct');
+                combo++;
+                var bonus = combo >= 5 ? 20 : combo >= 3 ? 15 : 10;
+                totalScore += bonus;
+                correctNum++;
+                feedback.textContent = '✅ 正确！+' + bonus + '分' + (combo >= 3 ? ' 🔥连击x' + combo : '');
+                feedback.style.color = '#43e97b';
+                if (window.audioManager) audioManager.playSuccessSound();
+                var starReward = combo >= 5 ? 8 : combo >= 3 ? 5 : 3;
+                if (window.storage) storage.addStars(starReward);
+                if (window.celebration) celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+            } else {
+                btn.classList.add('wrong');
+                btns.forEach(function(b) { if (b.textContent === correct) b.classList.add('correct'); });
+                combo = 0;
+                feedback.textContent = '❌ 正确答案是：' + correct;
+                feedback.style.color = '#ff6b6b';
+                if (window.audioManager) audioManager.playErrorSound();
+            }
+
+            document.getElementById('resChinese').textContent = currentWord.chinese;
+            document.getElementById('resChinese').style.display = 'block';
+            document.getElementById('totalScore').textContent = totalScore;
+            document.getElementById('correctCount').textContent = correctNum;
+            updateCombo();
+            updateStarDisplay();
+
+            setTimeout(function() { pickWheelWords(); drawWheel(); }, 800);
+        }
+
+        function updateCombo() {
+            var badge = document.getElementById('streakBadge');
+            if (combo >= 2) {
+                badge.style.display = 'inline-flex';
+                document.getElementById('comboCount').textContent = combo;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function speakCurrent() {
+            if (currentWord && window.audioManager) audioManager.speakWord(currentWord.word);
+        }
+        function speakCurrentSlow() {
+            if (currentWord && window.audioManager) audioManager.speak(currentWord.word, 0.4, 1.0);
+        }
+
+        function updateStarDisplay() {
+            var el = document.getElementById('starCount');
+            if (el && storage) el.textContent = storage.data.stars;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStarDisplay();
+            initCatTabs();
+            buildPool();
+            pickWheelWords();
+            drawWheel();
+        });
+    </script>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            var swPath = location.pathname.includes('/pages/') ? '../sw.js' : './sw.js';
+            navigator.serviceWorker.register(swPath).catch(function() {});
+        });
+    }
+    </script>
+</body>
+</html>

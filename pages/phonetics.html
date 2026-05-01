@@ -82,7 +82,7 @@
     <script src="../js/phonetics.js"></script>
     <script src="../js/app.js"></script>
 
-
+    <script>
     // 注册 Service Worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -92,6 +92,7 @@
                 .catch(err => console.log('SW failed:', err));
         });
     }
+    </script>
 
 </body>
 </html>

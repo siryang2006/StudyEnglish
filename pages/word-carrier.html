@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词搬运工 - KidsEnglish Fun</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/celebration.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .game-container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        .game-hud {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px; background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px; color: white; font-weight: bold; margin-bottom: 15px;
+        }
+        .hud-item { text-align: center; }
+        .hud-item .val { font-size: 24px; }
+        .hud-item .lbl { font-size: 12px; opacity: 0.85; }
+        .level-badge {
+            display: inline-block; padding: 4px 14px; border-radius: 15px;
+            background: rgba(255,255,255,0.2); font-size: 13px;
+        }
+        .game-card {
+            background: white; border-radius: 20px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px;
+        }
+        .sentence-display {
+            font-size: 22px; line-height: 2.2; text-align: center;
+            margin: 15px 0; min-height: 80px; color: var(--text-dark);
+        }
+        .sentence-display .filled-word {
+            display: inline-block; padding: 4px 12px; margin: 0 2px;
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white; border-radius: 8px; font-weight: bold;
+            animation: dropIn 0.4s ease-out;
+        }
+        .sentence-display .blank-slot {
+            display: inline-block; min-width: 70px; padding: 4px 12px;
+            margin: 0 2px; border-bottom: 3px dashed #667eea;
+            color: transparent; position: relative;
+        }
+        .sentence-display .blank-slot.active {
+            border-color: #ff6b6b; animation: blink 1s infinite;
+        }
+        .sentence-display .blank-slot .slot-hint {
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+            font-size: 11px; color: #667eea; white-space: nowrap;
+        }
+        @keyframes blink {
+            0%,100% { border-color: #ff6b6b; }
+            50% { border-color: #FFD93D; }
+        }
+        @keyframes dropIn {
+            0% { transform: translateY(-20px) scale(0.8); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .chinese-hint {
+            font-size: 18px; color: var(--text-light); text-align: center;
+            margin-bottom: 15px;
+        }
+        .robot-area {
+            position: relative; height: 80px; margin: 10px 0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .robot {
+            font-size: 50px; transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+        }
+        .robot.happy { animation: robotJump 0.5s ease; }
+        .robot.sad { animation: robotShake 0.4s ease; }
+        .robot-speech {
+            position: absolute; top: -10px; right: 20%;
+            background: white; border-radius: 12px; padding: 6px 12px;
+            font-size: 14px; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            display: none; animation: fadeIn 0.3s;
+        }
+        @keyframes robotJump {
+            0%,100% { transform: translateY(0); }
+            40% { transform: translateY(-20px) rotate(-5deg); }
+            60% { transform: translateY(-15px) rotate(5deg); }
+        }
+        @keyframes robotShake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+        .word-belt {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+            margin: 15px 0; min-height: 50px;
+        }
+        .belt-word {
+            padding: 12px 20px; border: 3px solid #667eea; border-radius: 15px;
+            background: white; font-size: 18px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s; color: var(--text-dark); position: relative;
+            user-select: none; -webkit-user-select: none;
+        }
+        .belt-word:hover { background: #667eea; color: white; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(102,126,234,0.3); }
+        .belt-word:active { transform: scale(0.95); }
+        .belt-word.used {
+            opacity: 0.3; cursor: default; pointer-events: none;
+            border-style: dashed;
+        }
+        .belt-word.correct-pick {
+            background: #43e97b; color: white; border-color: #43e97b;
+            animation: correctPop 0.4s ease;
+        }
+        .belt-word.wrong-pick {
+            background: #ff6b6b; color: white; border-color: #ff6b6b;
+            animation: robotShake 0.3s ease;
+        }
+        @keyframes correctPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .combo-display {
+            text-align: center; font-size: 16px; font-weight: bold;
+            color: #ff9a56; min-height: 24px; margin: 5px 0;
+        }
+        .particles {
+            position: fixed; pointer-events: none; z-index: 100;
+        }
+        .particle {
+            position: absolute; font-size: 20px;
+            animation: particleFly 1s ease-out forwards;
+        }
+        @keyframes particleFly {
+            0% { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+        .next-btn {
+            padding: 14px 40px; border: none; border-radius: 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; font-size: 18px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s; display: none; margin: 15px auto;
+        }
+        .next-btn:hover { transform: translateY(-2px); }
+        .progress-dots {
+            display: flex; gap: 6px; justify-content: center; margin: 10px 0;
+        }
+        .p-dot {
+            width: 12px; height: 12px; border-radius: 50%; background: #e0e0e0;
+            transition: all 0.3s;
+        }
+        .p-dot.done { background: #43e97b; }
+        .p-dot.current { background: #667eea; transform: scale(1.3); }
+        .complete-panel {
+            display: none; text-align: center; padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px; color: white; margin-top: 20px;
+        }
+        .complete-panel h2 { font-size: 28px; }
+        .complete-panel .big-score { font-size: 56px; font-weight: bold; color: #FFD93D; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">🤖</span>
+                <h1>单词搬运工</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content game-container">
+            <button class="back-btn" onclick="navigateTo('../index.html')">← 返回首页</button>
+
+            <div class="game-hud">
+                <div class="hud-item"><div class="val" id="hudScore">0</div><div class="lbl">分数</div></div>
+                <div class="hud-item"><div class="level-badge" id="hudLevel">第 1 关</div><div class="lbl">关卡</div></div>
+                <div class="hud-item"><div class="val" id="hudStars">0</div><div class="lbl">⭐ 星星</div></div>
+            </div>
+
+            <div class="progress-dots" id="progressDots"></div>
+
+            <div class="game-card" id="gameCard">
+                <div class="chinese-hint" id="chineseHint"></div>
+                <div class="sentence-display" id="sentenceDisplay"></div>
+
+                <div class="robot-area">
+                    <div class="robot" id="robot">🤖</div>
+                    <div class="robot-speech" id="robotSpeech"></div>
+                </div>
+
+                <div class="combo-display" id="comboDisplay"></div>
+                <div class="word-belt" id="wordBelt"></div>
+                <button class="next-btn" id="nextBtn" onclick="nextRound()">下一题 →</button>
+            </div>
+
+            <div class="complete-panel" id="completePanel">
+                <h2>🎉 关卡完成！</h2>
+                <div class="big-score" id="bigScore">0</div>
+                <p style="font-size:18px;margin:10px 0;">获得 <span id="earnedStars">0</span> ⭐ 星星</p>
+                <button class="next-btn" style="display:inline-block;background:linear-gradient(135deg,#43e97b,#38f9d7);" onclick="nextLevel()">下一关 →</button>
+                <button class="next-btn" style="display:inline-block;margin-left:10px;" onclick="navigateTo('../index.html')">返回首页</button>
+            </div>
+        </main>
+    </div>
+
+    <div class="particles" id="particles"></div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/audio.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/celebration.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        var sentences = [
+            { en: ['I', 'am', 'a', 'boy'], zh: '我是一个男孩。', blanks: [0, 1] },
+            { en: ['The', 'cat', 'is', 'cute'], zh: '这只猫很可爱。', blanks: [1, 3] },
+            { en: ['She', 'likes', 'apples'], zh: '她喜欢苹果。', blanks: [1, 2] },
+            { en: ['We', 'go', 'to', 'school'], zh: '我们去上学。', blanks: [1, 3] },
+            { en: ['He', 'is', 'playing', 'football'], zh: '他正在踢足球。', blanks: [2, 3] },
+            { en: ['They', 'are', 'happy'], zh: '他们很开心。', blanks: [1, 2] },
+            { en: ['I', 'love', 'my', 'family'], zh: '我爱我的家人。', blanks: [1, 3] },
+            { en: ['The', 'dog', 'is', 'big'], zh: '这只狗很大。', blanks: [1, 3] },
+            { en: ['She', 'is', 'reading', 'a', 'book'], zh: '她正在读书。', blanks: [2, 4] },
+            { en: ['I', 'can', 'swim'], zh: '我会游泳。', blanks: [1, 2] },
+            { en: ['Birds', 'can', 'fly'], zh: '鸟儿会飞。', blanks: [0, 2] },
+            { en: ['My', 'mother', 'is', 'cooking'], zh: '我妈妈正在做饭。', blanks: [1, 3] },
+            { en: ['The', 'sun', 'is', 'bright'], zh: '太阳很明亮。', blanks: [1, 3] },
+            { en: ['I', 'like', 'reading', 'books'], zh: '我喜欢读书。', blanks: [1, 2, 3] },
+            { en: ['He', 'will', 'be', 'a', 'doctor'], zh: '他将成为一名医生。', blanks: [1, 2, 4] },
+            { en: ['We', 'are', 'learning', 'English'], zh: '我们正在学英语。', blanks: [2, 3] },
+            { en: ['The', 'cat', 'is', 'sleeping'], zh: '猫正在睡觉。', blanks: [1, 3] },
+            { en: ['I', 'have', 'two', 'hands'], zh: '我有两只手。', blanks: [1, 2, 3] },
+            { en: ['She', 'goes', 'to', 'school', 'every', 'day'], zh: '她每天去上学。', blanks: [1, 3, 5] },
+            { en: ['This', 'is', 'a', 'red', 'apple'], zh: '这是一个红苹果。', blanks: [3, 4] },
+        ];
+
+        var level = 1, roundIdx = 0, roundsPerLevel = 5;
+        var score = 0, combo = 0, starsEarned = 0;
+        var currentSentence = null, blankQueue = [], currentBlankIdx = 0;
+        var levelSentences = [];
+
+        function shuffle(arr) {
+            for (var i = arr.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+            }
+            return arr;
+        }
+
+        function startLevel() {
+            levelSentences = shuffle(sentences.slice()).slice(0, roundsPerLevel);
+            roundIdx = 0;
+            document.getElementById('hudLevel').textContent = '第 ' + level + ' 关';
+            document.getElementById('completePanel').style.display = 'none';
+            document.getElementById('gameCard').style.display = 'block';
+            renderProgressDots();
+            loadRound();
+        }
+
+        function renderProgressDots() {
+            var dots = document.getElementById('progressDots');
+            dots.innerHTML = '';
+            for (var i = 0; i < roundsPerLevel; i++) {
+                var d = document.createElement('div');
+                d.className = 'p-dot';
+                if (i < roundIdx) d.className += ' done';
+                else if (i === roundIdx) d.className += ' current';
+                dots.appendChild(d);
+            }
+        }
+
+        function loadRound() {
+            if (roundIdx >= roundsPerLevel) { completeLevel(); return; }
+            currentSentence = levelSentences[roundIdx];
+            blankQueue = currentSentence.blanks.slice();
+            currentBlankIdx = 0;
+            renderProgressDots();
+
+            document.getElementById('chineseHint').textContent = '🇨🇳 ' + currentSentence.zh;
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('comboDisplay').textContent = combo >= 2 ? '🔥 连对 ' + combo + ' 题！' : '';
+
+            renderSentence();
+            renderBelt();
+            robotSay('帮我把单词放到正确的位置吧！');
+        }
+
+        function renderSentence() {
+            var display = document.getElementById('sentenceDisplay');
+            display.innerHTML = '';
+            currentSentence.en.forEach(function(word, i) {
+                if (blankQueue.indexOf(i) !== -1 && currentBlankIdx <= blankQueue.indexOf(i)) {
+                    var slot = document.createElement('span');
+                    slot.className = 'blank-slot';
+                    if (blankQueue[currentBlankIdx] === i) slot.className += ' active';
+                    slot.textContent = word;
+                    slot.id = 'slot-' + i;
+                    display.appendChild(slot);
+                } else if (blankQueue.indexOf(i) !== -1 && currentBlankIdx > blankQueue.indexOf(i)) {
+                    var filled = document.createElement('span');
+                    filled.className = 'filled-word';
+                    filled.textContent = word;
+                    display.appendChild(filled);
+                } else {
+                    display.appendChild(document.createTextNode(word + ' '));
+                }
+            });
+        }
+
+        function renderBelt() {
+            var belt = document.getElementById('wordBelt');
+            belt.innerHTML = '';
+            var correctWords = blankQueue.map(function(i) { return currentSentence.en[i]; });
+            var distractors = ['the','is','a','my','are','go','big','run','has','do','can','will','not','very','good'];
+            var extras = shuffle(distractors.filter(function(d) { return correctWords.indexOf(d) === -1; })).slice(0, 3);
+            var allOpts = shuffle(correctWords.concat(extras));
+
+            allOpts.forEach(function(word) {
+                var btn = document.createElement('div');
+                btn.className = 'belt-word';
+                btn.textContent = word;
+                btn.onclick = function() { pickWord(word, btn); };
+                belt.appendChild(btn);
+            });
+        }
+
+        function pickWord(word, btn) {
+            if (currentBlankIdx >= blankQueue.length) return;
+            var expectedIdx = blankQueue[currentBlankIdx];
+            var expectedWord = currentSentence.en[expectedIdx];
+
+            if (word === expectedWord) {
+                btn.classList.add('correct-pick');
+                setTimeout(function() { btn.classList.add('used'); }, 300);
+                currentBlankIdx++;
+                if (window.audioManager) audioManager.playSuccessSound();
+                spawnParticles(btn);
+                renderSentence();
+
+                if (currentBlankIdx >= blankQueue.length) {
+                    combo++;
+                    var pts = 10 + combo * 3;
+                    score += pts;
+                    starsEarned += combo >= 3 ? 5 : 3;
+                    document.getElementById('hudScore').textContent = score;
+                    document.getElementById('hudStars').textContent = starsEarned;
+                    document.getElementById('comboDisplay').textContent = combo >= 2 ? '🔥 连对 ' + combo + ' 题！' : '';
+
+                    robotSay(combo >= 3 ? '太厉害了！连击x' + combo + '！' : '搬运成功！');
+                    document.getElementById('robot').classList.add('happy');
+                    setTimeout(function() { document.getElementById('robot').classList.remove('happy'); }, 500);
+
+                    if (window.celebration) celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+                    if (window.audioManager) audioManager.speakSentence(currentSentence.en.join(' '));
+
+                    document.getElementById('nextBtn').style.display = 'block';
+                } else {
+                    robotSay('对了！继续搬！');
+                    document.getElementById('robot').classList.add('happy');
+                    setTimeout(function() { document.getElementById('robot').classList.remove('happy'); }, 400);
+                }
+            } else {
+                btn.classList.add('wrong-pick');
+                setTimeout(function() { btn.classList.remove('wrong-pick'); }, 400);
+                combo = 0;
+                document.getElementById('comboDisplay').textContent = '';
+                if (window.audioManager) audioManager.playErrorSound();
+                robotSay('不对哦，再想想！');
+                document.getElementById('robot').classList.add('sad');
+                setTimeout(function() { document.getElementById('robot').classList.remove('sad'); }, 400);
+            }
+        }
+
+        function nextRound() {
+            roundIdx++;
+            loadRound();
+        }
+
+        function completeLevel() {
+            document.getElementById('gameCard').style.display = 'none';
+            document.getElementById('completePanel').style.display = 'block';
+            document.getElementById('bigScore').textContent = score;
+            document.getElementById('earnedStars').textContent = starsEarned;
+            if (window.storage) storage.addStars(starsEarned);
+            updateStarDisplay();
+            if (window.celebration) celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+        }
+
+        function nextLevel() {
+            level++;
+            roundsPerLevel = Math.min(8, 5 + level - 1);
+            startLevel();
+        }
+
+        function robotSay(text) {
+            var speech = document.getElementById('robotSpeech');
+            speech.textContent = text;
+            speech.style.display = 'block';
+            setTimeout(function() { speech.style.display = 'none'; }, 2000);
+        }
+
+        function spawnParticles(el) {
+            var rect = el.getBoundingClientRect();
+            var cx = rect.left + rect.width / 2;
+            var cy = rect.top + rect.height / 2;
+            var container = document.getElementById('particles');
+            var emojis = ['⭐','✨','🌟','💫','🎉'];
+            for (var i = 0; i < 8; i++) {
+                var p = document.createElement('div');
+                p.className = 'particle';
+                p.textContent = emojis[i % emojis.length];
+                p.style.left = cx + 'px';
+                p.style.top = cy + 'px';
+                var angle = (Math.PI * 2 * i) / 8;
+                var dist = 40 + Math.random() * 60;
+                p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+                container.appendChild(p);
+                (function(el) { setTimeout(function() { el.remove(); }, 1000); })(p);
+            }
+        }
+
+        function updateStarDisplay() {
+            var el = document.getElementById('starCount');
+            if (el && storage) el.textContent = storage.data.stars;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStarDisplay();
+            starsEarned = 0;
+            startLevel();
+        });
+    </script>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            var swPath = location.pathname.includes('/pages/') ? '../sw.js' : './sw.js';
+            navigator.serviceWorker.register(swPath).catch(function() {});
+        });
+    }
+    </script>
+</body>
+</html>

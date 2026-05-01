@@ -295,6 +295,38 @@ const dailySentences = [
     { en: "We are friends.", zh: "我们是朋友。" }
 ];
 
+// 自然拼读数据
+const phonicsData = {
+    cvc: [
+        { word: 'cat', sounds: ['c','a','t'], emoji: '🐱' },
+        { word: 'dog', sounds: ['d','o','g'], emoji: '🐶' },
+        { word: 'hat', sounds: ['h','a','t'], emoji: '🎩' },
+        { word: 'sun', sounds: ['s','u','n'], emoji: '☀️' },
+        { word: 'bed', sounds: ['b','e','d'], emoji: '🛏️' },
+        { word: 'pig', sounds: ['p','i','g'], emoji: '🐷' },
+        { word: 'cup', sounds: ['c','u','p'], emoji: '☕' },
+        { word: 'bus', sounds: ['b','u','s'], emoji: '🚌' },
+        { word: 'hen', sounds: ['h','e','n'], emoji: '🐔' },
+        { word: 'fox', sounds: ['f','o','x'], emoji: '🦊' },
+        { word: 'map', sounds: ['m','a','p'], emoji: '🗺️' },
+        { word: 'net', sounds: ['n','e','t'], emoji: '🥅' },
+        { word: 'rug', sounds: ['r','u','g'], emoji: '🟫' },
+        { word: 'jam', sounds: ['j','a','m'], emoji: '🍯' },
+        { word: 'van', sounds: ['v','a','n'], emoji: '🚐' },
+        { word: 'zip', sounds: ['z','i','p'], emoji: '🤐' }
+    ],
+    blends: [
+        { word: 'frog', sounds: ['f','r','o','g'], emoji: '🐸' },
+        { word: 'tree', sounds: ['t','r','ee'], emoji: '🌳' },
+        { word: 'stop', sounds: ['s','t','o','p'], emoji: '🛑' },
+        { word: 'clap', sounds: ['c','l','a','p'], emoji: '👏' },
+        { word: 'swim', sounds: ['s','w','i','m'], emoji: '🏊' },
+        { word: 'drum', sounds: ['d','r','u','m'], emoji: '🥁' },
+        { word: 'flag', sounds: ['f','l','a','g'], emoji: '🚩' },
+        { word: 'snail', sounds: ['s','n','ai','l'], emoji: '🐌' }
+    ]
+};
+
 // 导出数据
 window.phoneticsData = {
     vowels: vowelPhonetics,
@@ -304,5 +336,6 @@ window.phoneticsData = {
     beVerb: beVerbData,
     tenses: tenseData,
     sentences: sentenceData,
-    daily: dailySentences
+    daily: dailySentences,
+    phonics: phonicsData
 };

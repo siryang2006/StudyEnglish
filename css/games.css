@@ -71,7 +71,7 @@
 }
 
 .difficulty-dot.active {
-    background: var(--accent-color);
+    background: var(--accent);
 }
 
 /* 气球游戏 */

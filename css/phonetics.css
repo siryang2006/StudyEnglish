@@ -33,7 +33,7 @@
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-soft);
 }
 
 .tab-btn.active {
@@ -44,7 +44,7 @@
 
 .tab-btn:hover {
     transform: translateY(-3px);
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-strong);
 }
 
 /* 音标网格 */
@@ -62,14 +62,14 @@
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-soft);
     position: relative;
     overflow: hidden;
 }
 
 .phonetic-card:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-strong);
 }
 
 .phonetic-card:active {
@@ -109,7 +109,7 @@
     background: white;
     border-radius: 20px;
     padding: 30px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-soft);
     display: none;
 }
 
@@ -176,7 +176,7 @@
 }
 
 .word-item {
-    background: var(--bg-color);
+    background: var(--bg-light);
     padding: 10px 20px;
     border-radius: 10px;
     cursor: pointer;
@@ -194,7 +194,7 @@
     background: white;
     border-radius: 20px;
     padding: 30px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-soft);
     text-align: center;
 }
 

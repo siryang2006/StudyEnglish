@@ -305,7 +305,7 @@
             // 更新按钮状态
             document.querySelectorAll('.letter-btn').forEach((btn, index) => {
                 btn.classList.toggle('active', index === currentLetterIndex);
-                btn.classList.toggle('completed', storage.data.completedLetters.includes(letterData.letter));
+                btn.classList.toggle('completed', storage.data.completedLetters.includes(alphabetData[index].letter));
             });
 
             // 不再自动播放，等待用户点击

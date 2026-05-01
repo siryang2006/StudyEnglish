@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日挑战 - KidsEnglish Fun</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/celebration.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .challenge-container { padding: 20px; max-width: 700px; margin: 0 auto; }
+        .challenge-card {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px;
+            text-align: center;
+        }
+        .progress-bar {
+            display: flex; gap: 8px; justify-content: center; margin: 20px 0;
+        }
+        .progress-dot {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #e0e0e0; display: flex; align-items: center;
+            justify-content: center; font-weight: bold; color: white;
+            transition: all 0.3s;
+        }
+        .progress-dot.done { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .progress-dot.current { background: linear-gradient(135deg, #667eea, #764ba2); transform: scale(1.2); }
+        .question-text {
+            font-size: 22px; color: var(--text-dark); margin: 25px 0;
+            min-height: 60px; display: flex; align-items: center; justify-content: center;
+        }
+        .question-emoji { font-size: 64px; margin: 15px 0; }
+        .options-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0;
+        }
+        .option-btn {
+            padding: 16px; border: 3px solid #e0e0e0; border-radius: 15px;
+            background: white; font-size: 18px; cursor: pointer;
+            transition: all 0.3s; font-weight: bold;
+        }
+        .option-btn:hover { border-color: var(--primary-color); transform: translateY(-2px); }
+        .option-btn.correct { background: #43e97b; border-color: #43e97b; color: white; }
+        .option-btn.wrong { background: #ff6b6b; border-color: #ff6b6b; color: white; }
+        .option-btn:disabled { cursor: default; opacity: 0.8; }
+        .listen-btn {
+            width: 80px; height: 80px; border-radius: 50%; border: none;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; font-size: 36px; cursor: pointer; margin: 15px auto;
+            display: block; transition: all 0.3s;
+        }
+        .listen-btn:hover { transform: scale(1.1); }
+        .result-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; border-radius: 20px; padding: 40px; text-align: center;
+        }
+        .result-score { font-size: 64px; font-weight: bold; margin: 15px 0; }
+        .result-stars { font-size: 36px; margin: 10px 0; }
+        .already-done {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white; border-radius: 20px; padding: 40px; text-align: center;
+        }
+        /* 转盘样式 */
+        .wheel-section { margin: 30px 0; text-align: center; }
+        .wheel-wrapper { position: relative; width: 280px; height: 280px; margin: 0 auto; }
+        .wheel-canvas { width: 280px; height: 280px; }
+        .wheel-pointer {
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            font-size: 30px; z-index: 2; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .wheel-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            width: 50px; height: 50px; border-radius: 50%;
+            background: white; border: 3px solid #667eea;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: #667eea; font-size: 14px; cursor: pointer;
+            z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .spin-btn {
+            margin-top: 15px; padding: 14px 40px; border: none; border-radius: 25px;
+            background: linear-gradient(135deg, #ff9a56, #ff6b6b);
+            color: white; font-size: 18px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s;
+        }
+        .spin-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255,107,107,0.4); }
+        .spin-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+        .wheel-result {
+            margin-top: 20px; padding: 15px; border-radius: 15px;
+            background: #f8f9fa; font-size: 18px; display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">🏆</span>
+                <h1>每日挑战</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content challenge-container">
+            <button class="back-btn" onclick="navigateTo('../index.html')">← 返回首页</button>
+
+            <div id="alreadyDone" class="already-done" style="display:none;">
+                <div style="font-size:64px;">✅</div>
+                <h2>今日挑战已完成！</h2>
+                <p style="font-size:20px;margin:15px 0;">得分：<span id="doneScore"></span> 分</p>
+                <p>明天再来挑战吧！</p>
+
+                <div class="wheel-section">
+                    <h3 style="color:white;margin-bottom:10px;">🎡 幸运转盘</h3>
+                    <p style="opacity:0.9;margin-bottom:15px;">转一转，赢取额外星星奖励！</p>
+                    <div class="wheel-wrapper">
+                        <div class="wheel-pointer">📍</div>
+                        <canvas id="wheelCanvas2" class="wheel-canvas" width="280" height="280"></canvas>
+                        <div class="wheel-center">GO</div>
+                    </div>
+                    <button class="spin-btn" id="spinBtn2" onclick="spinWheel('wheelCanvas2','spinBtn2','wheelResult2')">转一转！</button>
+                    <div class="wheel-result" id="wheelResult2"></div>
+                </div>
+            </div>
+
+            <div id="quizArea" style="display:none;">
+                <div class="challenge-card">
+                    <h2>🏆 每日5题挑战</h2>
+                    <div class="progress-bar" id="progressBar"></div>
+                    <div id="questionArea">
+                        <div class="question-emoji" id="questionEmoji"></div>
+                        <div class="question-text" id="questionText"></div>
+                        <button class="listen-btn" id="listenBtn" onclick="playQuestionAudio()" style="display:none;">🔊</button>
+                        <div class="options-grid" id="optionsGrid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultArea" style="display:none;">
+                <div class="result-card">
+                    <h2>挑战完成！</h2>
+                    <div class="result-score" id="resultScore"></div>
+                    <div class="result-stars" id="resultStars"></div>
+                    <p style="margin-top:15px;font-size:18px;" id="resultMsg"></p>
+                </div>
+
+                <div class="wheel-section" style="margin-top:30px;">
+                    <div class="challenge-card">
+                        <h3>🎡 幸运转盘 — 赢取额外奖励！</h3>
+                        <div class="wheel-wrapper" style="margin-top:20px;">
+                            <div class="wheel-pointer">📍</div>
+                            <canvas id="wheelCanvas" class="wheel-canvas" width="280" height="280"></canvas>
+                            <div class="wheel-center">GO</div>
+                        </div>
+                        <button class="spin-btn" id="spinBtn" onclick="spinWheel('wheelCanvas','spinBtn','wheelResult')">转一转！</button>
+                        <div class="wheel-result" id="wheelResult"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/audio.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/celebration.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        var questions = [];
+        var currentQ = 0;
+        var score = 0;
+        var totalQuestions = 5;
+
+        var allWords = [];
+        Object.keys(wordCategories).forEach(function(cat) {
+            wordCategories[cat].words.forEach(function(w) {
+                allWords.push(w);
+            });
+        });
+
+        function shuffle(arr) {
+            for (var i = arr.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+            }
+            return arr;
+        }
+
+        function pickRandom(arr, n) {
+            return shuffle(arr.slice()).slice(0, n);
+        }
+
+        function generateQuestions() {
+            questions = [];
+            var pool = shuffle(allWords.slice());
+            for (var i = 0; i < totalQuestions && i < pool.length; i++) {
+                var w = pool[i];
+                var type = ['emoji', 'listen', 'translate'][Math.floor(Math.random() * 3)];
+                var distractors = allWords.filter(function(x) { return x.word !== w.word; });
+                var opts = pickRandom(distractors, 3).map(function(x) { return x.word; });
+                opts.push(w.word);
+                opts = shuffle(opts);
+
+                if (type === 'emoji') {
+                    questions.push({ type: 'emoji', emoji: w.image, answer: w.word, options: opts, text: '这个图片对应哪个单词？' });
+                } else if (type === 'listen') {
+                    questions.push({ type: 'listen', word: w.word, answer: w.word, options: opts, text: '听发音，选择正确的单词' });
+                } else {
+                    var zhOpts = pickRandom(distractors, 3).map(function(x) { return x.chinese; });
+                    zhOpts.push(w.chinese);
+                    zhOpts = shuffle(zhOpts);
+                    questions.push({ type: 'translate', word: w.word, answer: w.chinese, options: zhOpts, text: '"' + w.word + '" 的中文意思是？' });
+                }
+            }
+        }
+
+        function renderProgress() {
+            var bar = document.getElementById('progressBar');
+            bar.innerHTML = '';
+            for (var i = 0; i < totalQuestions; i++) {
+                var dot = document.createElement('div');
+                dot.className = 'progress-dot';
+                if (i < currentQ) { dot.className += ' done'; dot.textContent = '✓'; }
+                else if (i === currentQ) { dot.className += ' current'; dot.textContent = (i + 1); }
+                else { dot.textContent = (i + 1); }
+                bar.appendChild(dot);
+            }
+        }
+
+        function showQuestion() {
+            if (currentQ >= totalQuestions) { showResult(); return; }
+            var q = questions[currentQ];
+            renderProgress();
+
+            var emojiEl = document.getElementById('questionEmoji');
+            var textEl = document.getElementById('questionText');
+            var listenBtn = document.getElementById('listenBtn');
+            var grid = document.getElementById('optionsGrid');
+
+            emojiEl.textContent = q.type === 'emoji' ? q.emoji : '';
+            emojiEl.style.display = q.type === 'emoji' ? 'block' : 'none';
+            textEl.textContent = q.text;
+            listenBtn.style.display = q.type === 'listen' ? 'block' : 'none';
+
+            if (q.type === 'listen' && window.audioManager) {
+                setTimeout(function() { audioManager.speakWord(q.word); }, 300);
+            }
+
+            grid.innerHTML = '';
+            q.options.forEach(function(opt) {
+                var btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = function() { checkAnswer(opt, btn); };
+                grid.appendChild(btn);
+            });
+        }
+
+        function playQuestionAudio() {
+            var q = questions[currentQ];
+            if (q && q.type === 'listen' && window.audioManager) {
+                audioManager.speakWord(q.word);
+            }
+        }
+
+        function checkAnswer(selected, btn) {
+            var q = questions[currentQ];
+            var btns = document.querySelectorAll('.option-btn');
+            btns.forEach(function(b) { b.disabled = true; });
+
+            if (selected === q.answer) {
+                btn.classList.add('correct');
+                score += 20;
+                if (window.audioManager) audioManager.playSuccessSound();
+            } else {
+                btn.classList.add('wrong');
+                btns.forEach(function(b) { if (b.textContent === q.answer) b.classList.add('correct'); });
+                if (window.audioManager) audioManager.playErrorSound();
+            }
+
+            setTimeout(function() { currentQ++; showQuestion(); }, 1200);
+        }
+
+        function showResult() {
+            document.getElementById('quizArea').style.display = 'none';
+            document.getElementById('resultArea').style.display = 'block';
+            document.getElementById('resultScore').textContent = score + ' 分';
+
+            var stars = score >= 80 ? '⭐⭐⭐' : score >= 60 ? '⭐⭐' : '⭐';
+            document.getElementById('resultStars').textContent = stars;
+
+            var msg = score >= 80 ? '太棒了！你是英语小达人！' : score >= 60 ? '不错哦，继续加油！' : '再接再厉，明天继续！';
+            document.getElementById('resultMsg').textContent = msg;
+
+            storage.completeDailyChallenge(score);
+            updateStarDisplay();
+
+            if (window.celebration && score >= 60) {
+                celebration.simpleSuccess(window.innerWidth / 2, window.innerHeight / 2);
+            }
+
+            drawWheel('wheelCanvas');
+        }
+
+        // ========== 转盘功能 ==========
+        var wheelSegments = [
+            { text: '⭐ x5', reward: 5, color: '#FF6B6B' },
+            { text: '⭐ x10', reward: 10, color: '#4ECDC4' },
+            { text: '⭐ x2', reward: 2, color: '#45B7D1' },
+            { text: '⭐ x20', reward: 20, color: '#96E6A1' },
+            { text: '⭐ x3', reward: 3, color: '#DDA0DD' },
+            { text: '⭐ x15', reward: 15, color: '#FFD93D' },
+            { text: '⭐ x1', reward: 1, color: '#FF9A56' },
+            { text: '⭐ x8', reward: 8, color: '#667eea' }
+        ];
+        var wheelAngle = 0;
+        var isSpinning = false;
+
+        function drawWheel(canvasId) {
+            var canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var cx = 140, cy = 140, r = 130;
+            var n = wheelSegments.length;
+            var arc = (Math.PI * 2) / n;
+
+            ctx.clearRect(0, 0, 280, 280);
+
+            for (var i = 0; i < n; i++) {
+                var angle = wheelAngle + arc * i;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, angle, angle + arc);
+                ctx.closePath();
+                ctx.fillStyle = wheelSegments[i].color;
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle + arc / 2);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(wheelSegments[i].text, r * 0.6, 5);
+                ctx.restore();
+            }
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+        }
+
+        function spinWheel(canvasId, btnId, resultId) {
+            if (isSpinning) return;
+            isSpinning = true;
+            var btn = document.getElementById(btnId);
+            btn.disabled = true;
+
+            var n = wheelSegments.length;
+            var arc = (Math.PI * 2) / n;
+            var targetIdx = Math.floor(Math.random() * n);
+            var spins = 5 + Math.random() * 3;
+            var targetAngle = -(targetIdx * arc + arc / 2) + Math.PI * 2 * spins;
+            var startAngle = wheelAngle;
+            var startTime = null;
+            var duration = 4000;
+
+            function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+            function animate(ts) {
+                if (!startTime) startTime = ts;
+                var elapsed = ts - startTime;
+                var progress = Math.min(elapsed / duration, 1);
+                wheelAngle = startAngle + targetAngle * easeOut(progress);
+
+                drawWheel(canvasId);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    var reward = wheelSegments[targetIdx].reward;
+                    storage.addStars(reward);
+                    updateStarDisplay();
+
+                    var resultEl = document.getElementById(resultId);
+                    resultEl.style.display = 'block';
+                    resultEl.innerHTML = '🎉 恭喜获得 <b>' + reward + '</b> 颗星星！';
+                    resultEl.style.color = wheelSegments[targetIdx].color;
+
+                    if (window.audioManager) audioManager.playSuccessSound();
+                    if (window.celebration) celebration.simpleSuccess(window.innerWidth / 2, window.innerHeight / 2);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function updateStarDisplay() {
+            var el = document.getElementById('starCount');
+            if (el && storage) el.textContent = storage.data.stars;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStarDisplay();
+
+            if (storage.isDailyChallengeCompleted()) {
+                document.getElementById('alreadyDone').style.display = 'block';
+                document.getElementById('doneScore').textContent = storage.data.dailyChallengeScore;
+                drawWheel('wheelCanvas2');
+            } else {
+                document.getElementById('quizArea').style.display = 'block';
+                generateQuestions();
+                showQuestion();
+            }
+        });
+    </script>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            var swPath = location.pathname.includes('/pages/') ? '../sw.js' : './sw.js';
+            navigator.serviceWorker.register(swPath).catch(function() {});
+        });
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自然拼读 - KidsEnglish Fun</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/celebration.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+    <style>
+        .phonics-container { padding: 20px; max-width: 800px; margin: 0 auto; }
+        .mode-tabs {
+            display: flex; gap: 10px; justify-content: center; margin: 20px 0;
+        }
+        .mode-tab {
+            padding: 12px 30px; border: none; border-radius: 25px;
+            background: white; font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .mode-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .level-tabs {
+            display: flex; gap: 8px; justify-content: center; margin-bottom: 20px;
+        }
+        .level-tab {
+            padding: 8px 20px; border: 2px solid #e0e0e0; border-radius: 20px;
+            background: white; font-size: 14px; cursor: pointer; transition: all 0.3s;
+        }
+        .level-tab.active { border-color: #667eea; background: #667eea; color: white; }
+
+        /* 学习模式 */
+        .learn-card {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
+            margin-bottom: 20px;
+        }
+        .word-emoji { font-size: 80px; margin: 10px 0; }
+        .word-display { font-size: 36px; font-weight: bold; color: var(--text-dark); margin: 15px 0; letter-spacing: 4px; }
+        .sounds-row {
+            display: flex; gap: 12px; justify-content: center; margin: 20px 0; flex-wrap: wrap;
+        }
+        .sound-btn {
+            width: 70px; height: 70px; border-radius: 50%; border: 3px solid #667eea;
+            background: white; font-size: 28px; font-weight: bold; color: #667eea;
+            cursor: pointer; transition: all 0.3s; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .sound-btn:hover { background: #667eea; color: white; transform: scale(1.1); }
+        .sound-btn.playing { background: #667eea; color: white; animation: pulse 0.4s; }
+        .blend-btn {
+            padding: 14px 40px; border: none; border-radius: 25px;
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: white; font-size: 18px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s; margin: 10px 5px;
+        }
+        .blend-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(67,233,123,0.4); }
+        .nav-btns { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        .nav-btn {
+            padding: 12px 30px; border: none; border-radius: 25px;
+            background: var(--primary-color); color: white; font-size: 16px;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .nav-btn:hover { transform: translateY(-2px); }
+        .word-counter { color: var(--text-light); margin-bottom: 10px; }
+
+        /* 练习模式 */
+        .practice-card {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
+            margin-bottom: 20px;
+        }
+        .practice-prompt { font-size: 20px; color: var(--text-dark); margin: 10px 0; }
+        .practice-sounds {
+            display: flex; gap: 10px; justify-content: center; margin: 20px 0; flex-wrap: wrap;
+        }
+        .practice-sound-btn {
+            padding: 14px 22px; border: 3px solid #e0e0e0; border-radius: 15px;
+            background: white; font-size: 22px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s; min-width: 60px;
+        }
+        .practice-sound-btn:hover { border-color: #667eea; transform: translateY(-2px); }
+        .practice-sound-btn.selected { background: #667eea; color: white; border-color: #667eea; }
+        .practice-sound-btn.correct { background: #43e97b; color: white; border-color: #43e97b; }
+        .practice-sound-btn.wrong { background: #ff6b6b; color: white; border-color: #ff6b6b; }
+        .answer-display {
+            min-height: 50px; display: flex; gap: 8px; justify-content: center;
+            align-items: center; margin: 15px 0; flex-wrap: wrap;
+        }
+        .answer-letter {
+            padding: 10px 16px; background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; border-radius: 10px; font-size: 22px; font-weight: bold;
+            animation: bounceIn 0.3s;
+        }
+        .practice-feedback {
+            font-size: 20px; font-weight: bold; margin: 15px 0; min-height: 30px;
+        }
+        .practice-score {
+            font-size: 18px; color: var(--primary-color); font-weight: bold;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0); } 50% { transform: scale(1.2); } 100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="main-header">
+            <div class="logo">
+                <span class="logo-icon">🔊</span>
+                <h1>自然拼读</h1>
+            </div>
+            <div class="user-info">
+                <div class="stars">
+                    <span class="star-icon">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content phonics-container">
+            <button class="back-btn" onclick="navigateTo('../index.html')">← 返回首页</button>
+
+            <div class="mode-tabs">
+                <button class="mode-tab active" onclick="switchMode('learn',this)">📖 学习</button>
+                <button class="mode-tab" onclick="switchMode('practice',this)">✏️ 练习</button>
+            </div>
+
+            <div class="level-tabs">
+                <button class="level-tab active" onclick="switchLevel('cvc',this)">CVC 基础词</button>
+                <button class="level-tab" onclick="switchLevel('blends',this)">辅音组合</button>
+            </div>
+
+            <!-- 学习模式 -->
+            <div id="learnMode">
+                <div class="learn-card">
+                    <div class="word-counter" id="wordCounter">1 / 16</div>
+                    <div class="word-emoji" id="learnEmoji">🐱</div>
+                    <div class="word-display" id="learnWord">cat</div>
+                    <div class="sounds-row" id="soundsRow"></div>
+                    <div>
+                        <button class="blend-btn" onclick="blendWord()">🔊 拼读</button>
+                        <button class="blend-btn" onclick="speakWhole()" style="background:linear-gradient(135deg,#667eea,#764ba2);">🗣️ 整词</button>
+                    </div>
+                    <div class="nav-btns">
+                        <button class="nav-btn" onclick="prevWord()">← 上一个</button>
+                        <button class="nav-btn" onclick="nextWord()">下一个 →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 练习模式 -->
+            <div id="practiceMode" style="display:none;">
+                <div class="practice-card">
+                    <div class="practice-score">得分: <span id="practiceScore">0</span></div>
+                    <div class="word-emoji" id="practiceEmoji" style="font-size:64px;">🐱</div>
+                    <div class="practice-prompt" id="practicePrompt">按正确顺序点击发音，拼出这个单词</div>
+                    <div class="answer-display" id="answerDisplay"></div>
+                    <div class="practice-sounds" id="practiceSounds"></div>
+                    <div class="practice-feedback" id="practiceFeedback"></div>
+                    <button class="blend-btn" id="practiceNextBtn" onclick="nextPractice()" style="display:none;">下一题 →</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/audio.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/celebration.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        var currentMode = 'learn';
+        var currentLevel = 'cvc';
+        var learnIndex = 0;
+        var practiceIndex = 0;
+        var practiceScoreVal = 0;
+        var selectedSounds = [];
+        var currentPracticeWord = null;
+        var practicePool = [];
+
+        function getWordList() {
+            return phonicsData[currentLevel] || phonicsData.cvc;
+        }
+
+        function switchMode(mode, btn) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-tab').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            document.getElementById('learnMode').style.display = mode === 'learn' ? 'block' : 'none';
+            document.getElementById('practiceMode').style.display = mode === 'practice' ? 'block' : 'none';
+            if (mode === 'learn') loadLearnWord();
+            else startPractice();
+        }
+
+        function switchLevel(level, btn) {
+            currentLevel = level;
+            document.querySelectorAll('.level-tab').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            learnIndex = 0;
+            practiceIndex = 0;
+            if (currentMode === 'learn') loadLearnWord();
+            else startPractice();
+        }
+
+        // ===== 学习模式 =====
+        function loadLearnWord() {
+            var list = getWordList();
+            if (learnIndex < 0) learnIndex = list.length - 1;
+            if (learnIndex >= list.length) learnIndex = 0;
+            var item = list[learnIndex];
+
+            document.getElementById('wordCounter').textContent = (learnIndex + 1) + ' / ' + list.length;
+            document.getElementById('learnEmoji').textContent = item.emoji;
+            document.getElementById('learnWord').textContent = item.word;
+
+            var row = document.getElementById('soundsRow');
+            row.innerHTML = '';
+            item.sounds.forEach(function(s) {
+                var btn = document.createElement('button');
+                btn.className = 'sound-btn';
+                btn.textContent = s;
+                btn.onclick = function() { speakSound(s, btn); };
+                row.appendChild(btn);
+            });
+        }
+
+        function speakSound(sound, btn) {
+            if (window.audioManager) audioManager.speakPhonetic(sound);
+            if (btn) {
+                btn.classList.add('playing');
+                setTimeout(function() { btn.classList.remove('playing'); }, 400);
+            }
+        }
+
+        function blendWord() {
+            var list = getWordList();
+            var item = list[learnIndex];
+            var delay = 0;
+            item.sounds.forEach(function(s, i) {
+                setTimeout(function() {
+                    var btns = document.querySelectorAll('.sound-btn');
+                    if (btns[i]) speakSound(s, btns[i]);
+                }, delay);
+                delay += 600;
+            });
+            setTimeout(function() {
+                if (window.audioManager) audioManager.speakWord(item.word);
+            }, delay + 300);
+        }
+
+        function speakWhole() {
+            var list = getWordList();
+            if (window.audioManager) audioManager.speakWord(list[learnIndex].word);
+        }
+
+        function prevWord() { learnIndex--; loadLearnWord(); }
+        function nextWord() {
+            learnIndex++;
+            loadLearnWord();
+            storage.addStars(1);
+            updateStarDisplay();
+        }
+
+        // ===== 练习模式 =====
+        function startPractice() {
+            practiceScoreVal = 0;
+            document.getElementById('practiceScore').textContent = 0;
+            practicePool = shuffle(getWordList().slice());
+            practiceIndex = 0;
+            loadPracticeWord();
+        }
+
+        function shuffle(arr) {
+            for (var i = arr.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+            }
+            return arr;
+        }
+
+        function loadPracticeWord() {
+            if (practiceIndex >= practicePool.length) practiceIndex = 0;
+            currentPracticeWord = practicePool[practiceIndex];
+            selectedSounds = [];
+
+            document.getElementById('practiceEmoji').textContent = currentPracticeWord.emoji;
+            document.getElementById('practicePrompt').textContent = '按正确顺序点击发音，拼出这个单词';
+            document.getElementById('answerDisplay').innerHTML = '';
+            document.getElementById('practiceFeedback').textContent = '';
+            document.getElementById('practiceNextBtn').style.display = 'none';
+
+            var container = document.getElementById('practiceSounds');
+            container.innerHTML = '';
+
+            var shuffled = shuffle(currentPracticeWord.sounds.slice());
+            shuffled.forEach(function(s, i) {
+                var btn = document.createElement('button');
+                btn.className = 'practice-sound-btn';
+                btn.textContent = s;
+                btn.dataset.idx = i;
+                btn.onclick = function() { selectSound(s, btn); };
+                container.appendChild(btn);
+            });
+
+            if (window.audioManager) {
+                setTimeout(function() { audioManager.speakWord(currentPracticeWord.word); }, 300);
+            }
+        }
+
+        function selectSound(sound, btn) {
+            if (btn.classList.contains('selected')) return;
+            btn.classList.add('selected');
+            selectedSounds.push(sound);
+
+            var display = document.getElementById('answerDisplay');
+            var letter = document.createElement('span');
+            letter.className = 'answer-letter';
+            letter.textContent = sound;
+            display.appendChild(letter);
+
+            if (window.audioManager) audioManager.speakPhonetic(sound);
+
+            if (selectedSounds.length === currentPracticeWord.sounds.length) {
+                checkPracticeAnswer();
+            }
+        }
+
+        function checkPracticeAnswer() {
+            var correct = selectedSounds.join('') === currentPracticeWord.sounds.join('');
+            var feedback = document.getElementById('practiceFeedback');
+
+            if (correct) {
+                feedback.textContent = '✅ 太棒了！正确！';
+                feedback.style.color = '#43e97b';
+                practiceScoreVal += 10;
+                document.getElementById('practiceScore').textContent = practiceScoreVal;
+                storage.addStars(3);
+                updateStarDisplay();
+                if (window.audioManager) audioManager.playSuccessSound();
+                if (window.celebration) celebration.simpleSuccess(window.innerWidth / 2, window.innerHeight / 2);
+
+                document.querySelectorAll('.practice-sound-btn.selected').forEach(function(b) {
+                    b.classList.add('correct');
+                });
+            } else {
+                feedback.textContent = '❌ 不对哦，正确顺序是：' + currentPracticeWord.sounds.join(' - ');
+                feedback.style.color = '#ff6b6b';
+                if (window.audioManager) audioManager.playErrorSound();
+
+                document.querySelectorAll('.practice-sound-btn.selected').forEach(function(b) {
+                    b.classList.add('wrong');
+                });
+            }
+
+            document.querySelectorAll('.practice-sound-btn').forEach(function(b) {
+                b.onclick = null;
+                b.style.cursor = 'default';
+            });
+
+            document.getElementById('practiceNextBtn').style.display = 'inline-block';
+        }
+
+        function nextPractice() {
+            practiceIndex++;
+            loadPracticeWord();
+        }
+
+        function updateStarDisplay() {
+            var el = document.getElementById('starCount');
+            if (el && storage) el.textContent = storage.data.stars;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStarDisplay();
+            loadLearnWord();
+        });
+    </script>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            var swPath = location.pathname.includes('/pages/') ? '../sw.js' : './sw.js';
+            navigator.serviceWorker.register(swPath).catch(function() {});
+        });
+    }
+    </script>
+</body>
+</html>

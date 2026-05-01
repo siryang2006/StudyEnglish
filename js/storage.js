@@ -26,7 +26,10 @@ class StorageManager {
             dailyGoal: 50,
             lastVisit: null,
             streak: 0,
-            history: []
+            history: [],
+            lastCheckIn: null,
+            dailyChallengeDate: null,
+            dailyChallengeScore: null
         };
     }
 
@@ -106,7 +109,7 @@ class StorageManager {
 
         if (lastVisit === yesterdayStr) {
             this.data.streak++;
-        } else if (lastVisit !== today) {
+        } else {
             this.data.streak = 1;
         }
 
@@ -140,6 +143,32 @@ class StorageManager {
     // 重置所有数据
     reset() {
         this.data = this.getDefaultData();
+        this.save();
+    }
+
+    dailyCheckIn() {
+        var today = new Date().toDateString();
+        if (this.data.lastCheckIn === today) return { alreadyCheckedIn: true, streak: this.data.streak };
+        this.checkStreak();
+        this.data.lastCheckIn = today;
+        var reward = Math.min(5 + this.data.streak * 2, 50);
+        this.addStars(reward);
+        this.save();
+        return { alreadyCheckedIn: false, streak: this.data.streak, reward: reward };
+    }
+
+    isCheckedInToday() {
+        return this.data.lastCheckIn === new Date().toDateString();
+    }
+
+    isDailyChallengeCompleted() {
+        return this.data.dailyChallengeDate === new Date().toDateString();
+    }
+
+    completeDailyChallenge(score) {
+        this.data.dailyChallengeDate = new Date().toDateString();
+        this.data.dailyChallengeScore = score;
+        this.addStars(score);
         this.save();
     }
 }

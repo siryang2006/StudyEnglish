@@ -75,7 +75,7 @@
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 20px;
-            border-bottom: 2px solid var(--bg-color);
+            border-bottom: 2px solid var(--bg-light);
         }
         
         .balloon-score, .balloon-timer {
@@ -93,7 +93,7 @@
             color: var(--text-dark);
             margin: 20px 0;
             padding: 15px;
-            background: var(--bg-color);
+            background: var(--bg-light);
             border-radius: 10px;
         }
         
@@ -402,6 +402,7 @@
         function renderGames() {
             const grid = document.getElementById('gamesGrid');
             if (!grid) return;
+            grid.innerHTML = '';
             
             games.forEach((game, index) => {
                 const card = document.createElement('div');
@@ -452,15 +453,20 @@
                 window.location.href = 'wordbook.html';
             } else if (gameId === 'tracing') {
                 window.location.href = 'letter-tracing.html';
-            } else {
-                alert('游戏开发中...');
-                showGamesList();
+            } else if (gameId === 'sentence') {
+                document.getElementById('sentenceGame').style.display = 'block';
+                document.getElementById('sentenceGame').classList.add('active');
+                initSentenceGame();
+            } else if (gameId === 'read') {
+                document.getElementById('readGame').style.display = 'block';
+                document.getElementById('readGame').classList.add('active');
+                initReadGame();
             }
         }
 
         function showGamesList() {
             document.getElementById('gamesList').style.display = 'block';
-            document.querySelectorAll('.balloon-game, .listen-game, .match-game, .read-game, .sentence-game').forEach(g => {
+            document.querySelectorAll('.balloon-game, .puzzle-game, .listen-game, .match-game, .read-game, .sentence-game').forEach(g => {
                 g.style.display = 'none';
                 g.classList.remove('active');
             });
@@ -766,7 +772,7 @@ function initBalloonGame() {
                 hard: [
                     { word: 'cat', options: ['cat', 'bat', 'hat', 'mat', 'rat'] },
                     { word: 'dog', options: ['dog', 'log', 'fog', 'frog', 'hog'] },
-                    { word: 'bird', options: ['bird', 'word', 'third', 'heard', 'bird'] },
+                    { word: 'bird', options: ['bird', 'word', 'third', 'heard', 'herd'] },
                     { word: 'elephant', options: ['elephant', 'tiger', 'lion', 'monkey', 'bear'] }
                 ]
             };

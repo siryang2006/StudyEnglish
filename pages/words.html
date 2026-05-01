@@ -292,14 +292,14 @@
         // 下一个单词
         function nextWord() {
             const category = wordCategories[currentCategory];
+
+            storage.addLearnedWord(currentCategory + '_' + currentIndex);
+            storage.addStars(2);
+
             currentIndex = (currentIndex + 1) % category.words.length;
             isFlipped = false;
             document.getElementById('flashcard').classList.remove('flipped');
             loadWord();
-            
-            // 添加星星
-            storage.addLearnedWord(currentCategory + '_' + currentIndex);
-            storage.addStars(2);
             updateStarDisplay();
         }
 

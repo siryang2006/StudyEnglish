@@ -52,7 +52,7 @@ class KidsEnglishApp {
     showStarAnimation(count) {
         // 使用增强的庆祝效果
         if (window.celebration && count >= 10) {
-            window.celebration.simpleSuccess(event?.clientX || window.innerWidth/2, event?.clientY || window.innerHeight/2);
+            window.celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
         }
     }
 
@@ -141,12 +141,12 @@ function showSettings() {
 function initDailySentence() {
     const sentenceElem = document.getElementById('dailySentence');
     if (sentenceElem) {
-        sentenceElem.addEventListener('click', function() {
+        sentenceElem.addEventListener('click', function(e) {
             if (window.audioManager) {
                 window.audioManager.speakSentence(this.textContent);
             }
             if (window.celebration) {
-                window.celebration.simpleSuccess(event.clientX, event.clientY);
+                window.celebration.simpleSuccess(e.clientX, e.clientY);
             }
         });
     }

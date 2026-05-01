@@ -78,6 +78,42 @@
                 self.synth.speak(u);
             }, 100);
         }
+
+        speakWord(word) { this.speak(word, 0.75, 1.1); }
+        speakLetter(letter) { this.speak(letter, 0.7, 1.2); }
+        speakSentence(text) { this.speak(text, 0.8, 1.0); }
+        speakPhonetic(symbol) { this.speak(symbol, 0.6, 1.0); }
+
+        _playTone(freq, duration, type) {
+            try {
+                var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.type = type || "sine";
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch(e) { console.warn("Tone error:", e); }
+        }
+
+        playSuccessSound() {
+            var self = this;
+            this._playTone(523, 0.15, "sine");
+            setTimeout(function() { self._playTone(659, 0.15, "sine"); }, 100);
+            setTimeout(function() { self._playTone(784, 0.3, "sine"); }, 200);
+        }
+
+        playErrorSound() {
+            this._playTone(200, 0.4, "sawtooth");
+        }
+
+        playClickSound() {
+            this._playTone(1000, 0.08, "sine");
+        }
     }
 
     window.audioManager = new AudioManager();

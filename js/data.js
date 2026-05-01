@@ -163,7 +163,16 @@ const wordCategories = {
             { word: 'nose', chinese: '鼻子', image: '👃', phonetic: '/nəʊz/', imageSrc: 'assets/images/body/nose.png' },
             { word: 'mouth', chinese: '嘴巴', image: '👄', phonetic: '/maʊθ/', imageSrc: 'assets/images/body/mouth.png' },
             { word: 'hand', chinese: '手', image: '✋', phonetic: '/hænd/', imageSrc: 'assets/images/body/hand.png' },
-            { word: 'foot', chinese: '脚', image: '🦶', phonetic: '/fʊt/', imageSrc: 'assets/images/body/foot.png' }
+            { word: 'foot', chinese: '脚', image: '🦶', phonetic: '/fʊt/', imageSrc: 'assets/images/body/foot.png' },
+            { word: 'ear', chinese: '耳朵', image: '👂', phonetic: '/ɪə/', imageSrc: '' },
+            { word: 'arm', chinese: '手臂', image: '💪', phonetic: '/ɑːm/', imageSrc: '' },
+            { word: 'leg', chinese: '腿', image: '🦵', phonetic: '/leg/', imageSrc: '' },
+            { word: 'finger', chinese: '手指', image: '☝️', phonetic: '/ˈfɪŋɡə/', imageSrc: '' },
+            { word: 'hair', chinese: '头发', image: '💇', phonetic: '/heə/', imageSrc: '' },
+            { word: 'face', chinese: '脸', image: '😊', phonetic: '/feɪs/', imageSrc: '' },
+            { word: 'tooth', chinese: '牙齿', image: '🦷', phonetic: '/tuːθ/', imageSrc: '' },
+            { word: 'shoulder', chinese: '肩膀', image: '🤷', phonetic: '/ˈʃəʊldə/', imageSrc: '' },
+            { word: 'knee', chinese: '膝盖', image: '🦵', phonetic: '/niː/', imageSrc: '' }
         ]
     },
     school: {
@@ -172,9 +181,122 @@ const wordCategories = {
         words: [
             { word: 'book', chinese: '书', image: '📖', phonetic: '/bʊk/', imageSrc: 'assets/images/school/book.png' },
             { word: 'pen', chinese: '钢笔', image: '🖊', phonetic: '/pen/', imageSrc: 'assets/images/school/pen.png' },
-            { word: 'teacher', chinese: '老师', image: '👩‍🏫', phonetic: '/ˈti:tʃə/', imageSrc: 'assets/images/school/teacher.png' },
-            { word: 'student', chinese: '学生', image: '👨‍🎓', phonetic: '/ˈstju:dnt/', imageSrc: 'assets/images/school/student.png' },
-            { word: 'classroom', chinese: '教室', image: '🏫', phonetic: '/ˈklɑ:sru:m/', imageSrc: 'assets/images/school/classroom.png' }
+            { word: 'teacher', chinese: '老师', image: '👩‍🏫', phonetic: '/ˈtiːtʃə/', imageSrc: 'assets/images/school/teacher.png' },
+            { word: 'student', chinese: '学生', image: '👨‍🎓', phonetic: '/ˈstjuːdnt/', imageSrc: 'assets/images/school/student.png' },
+            { word: 'classroom', chinese: '教室', image: '🏫', phonetic: '/ˈklɑːsruːm/', imageSrc: 'assets/images/school/classroom.png' },
+            { word: 'pencil', chinese: '铅笔', image: '✏️', phonetic: '/ˈpensl/', imageSrc: '' },
+            { word: 'ruler', chinese: '尺子', image: '📏', phonetic: '/ˈruːlə/', imageSrc: '' },
+            { word: 'eraser', chinese: '橡皮', image: '🧹', phonetic: '/ɪˈreɪzə/', imageSrc: '' },
+            { word: 'desk', chinese: '课桌', image: '🪑', phonetic: '/desk/', imageSrc: '' },
+            { word: 'chair', chinese: '椅子', image: '💺', phonetic: '/tʃeə/', imageSrc: '' },
+            { word: 'bag', chinese: '书包', image: '🎒', phonetic: '/bæɡ/', imageSrc: '' },
+            { word: 'homework', chinese: '作业', image: '📝', phonetic: '/ˈhəʊmwɜːk/', imageSrc: '' }
+        ]
+    },
+    nature: {
+        name: '自然',
+        icon: '🌿',
+        words: [
+            { word: 'sun', chinese: '太阳', image: '☀️', phonetic: '/sʌn/', imageSrc: '' },
+            { word: 'moon', chinese: '月亮', image: '🌙', phonetic: '/muːn/', imageSrc: '' },
+            { word: 'star', chinese: '星星', image: '⭐', phonetic: '/stɑː/', imageSrc: '' },
+            { word: 'tree', chinese: '树', image: '🌳', phonetic: '/triː/', imageSrc: '' },
+            { word: 'flower', chinese: '花', image: '🌸', phonetic: '/ˈflaʊə/', imageSrc: '' },
+            { word: 'rain', chinese: '雨', image: '🌧️', phonetic: '/reɪn/', imageSrc: '' },
+            { word: 'snow', chinese: '雪', image: '❄️', phonetic: '/snəʊ/', imageSrc: '' },
+            { word: 'wind', chinese: '风', image: '💨', phonetic: '/wɪnd/', imageSrc: '' },
+            { word: 'cloud', chinese: '云', image: '☁️', phonetic: '/klaʊd/', imageSrc: '' },
+            { word: 'river', chinese: '河流', image: '🏞️', phonetic: '/ˈrɪvə/', imageSrc: '' },
+            { word: 'mountain', chinese: '山', image: '⛰️', phonetic: '/ˈmaʊntɪn/', imageSrc: '' },
+            { word: 'sea', chinese: '大海', image: '🌊', phonetic: '/siː/', imageSrc: '' },
+            { word: 'sky', chinese: '天空', image: '🌤️', phonetic: '/skaɪ/', imageSrc: '' },
+            { word: 'grass', chinese: '草', image: '🌱', phonetic: '/ɡrɑːs/', imageSrc: '' },
+            { word: 'lake', chinese: '湖', image: '🏞️', phonetic: '/leɪk/', imageSrc: '' }
+        ]
+    },
+    clothes: {
+        name: '衣物',
+        icon: '👕',
+        words: [
+            { word: 'shirt', chinese: '衬衫', image: '👔', phonetic: '/ʃɜːt/', imageSrc: '' },
+            { word: 'pants', chinese: '裤子', image: '👖', phonetic: '/pænts/', imageSrc: '' },
+            { word: 'dress', chinese: '连衣裙', image: '👗', phonetic: '/dres/', imageSrc: '' },
+            { word: 'shoes', chinese: '鞋子', image: '👟', phonetic: '/ʃuːz/', imageSrc: '' },
+            { word: 'hat', chinese: '帽子', image: '🎩', phonetic: '/hæt/', imageSrc: '' },
+            { word: 'coat', chinese: '外套', image: '🧥', phonetic: '/kəʊt/', imageSrc: '' },
+            { word: 'socks', chinese: '袜子', image: '🧦', phonetic: '/sɒks/', imageSrc: '' },
+            { word: 'gloves', chinese: '手套', image: '🧤', phonetic: '/ɡlʌvz/', imageSrc: '' },
+            { word: 'scarf', chinese: '围巾', image: '🧣', phonetic: '/skɑːf/', imageSrc: '' },
+            { word: 'skirt', chinese: '短裙', image: '👗', phonetic: '/skɜːt/', imageSrc: '' }
+        ]
+    },
+    transport: {
+        name: '交通',
+        icon: '🚗',
+        words: [
+            { word: 'car', chinese: '汽车', image: '🚗', phonetic: '/kɑː/', imageSrc: '' },
+            { word: 'bus', chinese: '公交车', image: '🚌', phonetic: '/bʌs/', imageSrc: '' },
+            { word: 'bike', chinese: '自行车', image: '🚲', phonetic: '/baɪk/', imageSrc: '' },
+            { word: 'train', chinese: '火车', image: '🚆', phonetic: '/treɪn/', imageSrc: '' },
+            { word: 'plane', chinese: '飞机', image: '✈️', phonetic: '/pleɪn/', imageSrc: '' },
+            { word: 'ship', chinese: '轮船', image: '🚢', phonetic: '/ʃɪp/', imageSrc: '' },
+            { word: 'taxi', chinese: '出租车', image: '🚕', phonetic: '/ˈtæksi/', imageSrc: '' },
+            { word: 'boat', chinese: '小船', image: '⛵', phonetic: '/bəʊt/', imageSrc: '' },
+            { word: 'truck', chinese: '卡车', image: '🚛', phonetic: '/trʌk/', imageSrc: '' },
+            { word: 'subway', chinese: '地铁', image: '🚇', phonetic: '/ˈsʌbweɪ/', imageSrc: '' }
+        ]
+    },
+    numbers: {
+        name: '数字',
+        icon: '🔢',
+        words: [
+            { word: 'one', chinese: '一', image: '1️⃣', phonetic: '/wʌn/', imageSrc: '' },
+            { word: 'two', chinese: '二', image: '2️⃣', phonetic: '/tuː/', imageSrc: '' },
+            { word: 'three', chinese: '三', image: '3️⃣', phonetic: '/θriː/', imageSrc: '' },
+            { word: 'four', chinese: '四', image: '4️⃣', phonetic: '/fɔː/', imageSrc: '' },
+            { word: 'five', chinese: '五', image: '5️⃣', phonetic: '/faɪv/', imageSrc: '' },
+            { word: 'six', chinese: '六', image: '6️⃣', phonetic: '/sɪks/', imageSrc: '' },
+            { word: 'seven', chinese: '七', image: '7️⃣', phonetic: '/ˈsevn/', imageSrc: '' },
+            { word: 'eight', chinese: '八', image: '8️⃣', phonetic: '/eɪt/', imageSrc: '' },
+            { word: 'nine', chinese: '九', image: '9️⃣', phonetic: '/naɪn/', imageSrc: '' },
+            { word: 'ten', chinese: '十', image: '🔟', phonetic: '/ten/', imageSrc: '' }
+        ]
+    },
+    weather: {
+        name: '天气',
+        icon: '🌤️',
+        words: [
+            { word: 'sunny', chinese: '晴天', image: '☀️', phonetic: '/ˈsʌni/', imageSrc: '' },
+            { word: 'cloudy', chinese: '多云', image: '☁️', phonetic: '/ˈklaʊdi/', imageSrc: '' },
+            { word: 'rainy', chinese: '下雨', image: '🌧️', phonetic: '/ˈreɪni/', imageSrc: '' },
+            { word: 'snowy', chinese: '下雪', image: '🌨️', phonetic: '/ˈsnəʊi/', imageSrc: '' },
+            { word: 'windy', chinese: '刮风', image: '💨', phonetic: '/ˈwɪndi/', imageSrc: '' },
+            { word: 'hot', chinese: '热', image: '🔥', phonetic: '/hɒt/', imageSrc: '' },
+            { word: 'cold', chinese: '冷', image: '🥶', phonetic: '/kəʊld/', imageSrc: '' },
+            { word: 'warm', chinese: '温暖', image: '🌡️', phonetic: '/wɔːm/', imageSrc: '' },
+            { word: 'cool', chinese: '凉爽', image: '😎', phonetic: '/kuːl/', imageSrc: '' },
+            { word: 'foggy', chinese: '有雾', image: '🌫️', phonetic: '/ˈfɒɡi/', imageSrc: '' }
+        ]
+    },
+    actions: {
+        name: '动作',
+        icon: '🏃',
+        words: [
+            { word: 'run', chinese: '跑', image: '🏃', phonetic: '/rʌn/', imageSrc: '' },
+            { word: 'jump', chinese: '跳', image: '🦘', phonetic: '/dʒʌmp/', imageSrc: '' },
+            { word: 'swim', chinese: '游泳', image: '🏊', phonetic: '/swɪm/', imageSrc: '' },
+            { word: 'eat', chinese: '吃', image: '🍽️', phonetic: '/iːt/', imageSrc: '' },
+            { word: 'drink', chinese: '喝', image: '🥤', phonetic: '/drɪŋk/', imageSrc: '' },
+            { word: 'sleep', chinese: '睡觉', image: '😴', phonetic: '/sliːp/', imageSrc: '' },
+            { word: 'read', chinese: '读', image: '📖', phonetic: '/riːd/', imageSrc: '' },
+            { word: 'write', chinese: '写', image: '✍️', phonetic: '/raɪt/', imageSrc: '' },
+            { word: 'sing', chinese: '唱歌', image: '🎤', phonetic: '/sɪŋ/', imageSrc: '' },
+            { word: 'dance', chinese: '跳舞', image: '💃', phonetic: '/dɑːns/', imageSrc: '' },
+            { word: 'play', chinese: '玩', image: '🎮', phonetic: '/pleɪ/', imageSrc: '' },
+            { word: 'cook', chinese: '做饭', image: '🍳', phonetic: '/kʊk/', imageSrc: '' },
+            { word: 'draw', chinese: '画画', image: '🎨', phonetic: '/drɔː/', imageSrc: '' },
+            { word: 'fly', chinese: '飞', image: '🕊️', phonetic: '/flaɪ/', imageSrc: '' },
+            { word: 'walk', chinese: '走路', image: '🚶', phonetic: '/wɔːk/', imageSrc: '' }
         ]
     }
 };

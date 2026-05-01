@@ -100,9 +100,21 @@ const wordCategories = {
             { word: 'bear', chinese: '熊', image: '🐻', imageSrc: 'assets/images/animals/bear.png', phonetic: '/beə/' },
             { word: 'duck', chinese: '鸭子', image: '🦆', imageSrc: 'assets/images/animals/duck.png', phonetic: '/dʌk/' },
             { word: 'pig', chinese: '猪', image: '🐷', imageSrc: 'assets/images/animals/pig.png', phonetic: '/pɪg/' },
-            { word: 'horse', chinese: '马', image: '🐴', imageSrc: 'assets/images/animals/horse.png', phonetic: '/hɔ:s/' },
+            { word: 'horse', chinese: '马', image: '🐴', imageSrc: 'assets/images/animals/horse.png', phonetic: '/hɔːs/' },
             { word: 'cow', chinese: '牛', image: '🐄', imageSrc: 'assets/images/animals/cow.png', phonetic: '/kaʊ/' },
-            { word: 'sheep', chinese: '羊', image: '🐑', imageSrc: 'assets/images/animals/sheep.png', phonetic: '/ʃi:p/' }
+            { word: 'sheep', chinese: '羊', image: '🐑', imageSrc: 'assets/images/animals/sheep.png', phonetic: '/ʃiːp/' },
+            { word: 'frog', chinese: '青蛙', image: '🐸', phonetic: '/frɒɡ/', imageSrc: '' },
+            { word: 'snake', chinese: '蛇', image: '🐍', phonetic: '/sneɪk/', imageSrc: '' },
+            { word: 'ant', chinese: '蚂蚁', image: '🐜', phonetic: '/ænt/', imageSrc: '' },
+            { word: 'bee', chinese: '蜜蜂', image: '🐝', phonetic: '/biː/', imageSrc: '' },
+            { word: 'butterfly', chinese: '蝴蝶', image: '🦋', phonetic: '/ˈbʌtəflaɪ/', imageSrc: '' },
+            { word: 'dolphin', chinese: '海豚', image: '🐬', phonetic: '/ˈdɒlfɪn/', imageSrc: '' },
+            { word: 'panda', chinese: '熊猫', image: '🐼', phonetic: '/ˈpændə/', imageSrc: '' },
+            { word: 'penguin', chinese: '企鹅', image: '🐧', phonetic: '/ˈpeŋɡwɪn/', imageSrc: '' },
+            { word: 'whale', chinese: '鲸鱼', image: '🐋', phonetic: '/weɪl/', imageSrc: '' },
+            { word: 'giraffe', chinese: '长颈鹿', image: '🦒', phonetic: '/dʒɪˈrɑːf/', imageSrc: '' },
+            { word: 'zebra', chinese: '斑马', image: '🦓', phonetic: '/ˈzebrə/', imageSrc: '' },
+            { word: 'chicken', chinese: '鸡', image: '🐔', phonetic: '/ˈtʃɪkɪn/', imageSrc: '' }
         ]
     },
     food: {
@@ -297,6 +309,94 @@ const wordCategories = {
             { word: 'draw', chinese: '画画', image: '🎨', phonetic: '/drɔː/', imageSrc: '' },
             { word: 'fly', chinese: '飞', image: '🕊️', phonetic: '/flaɪ/', imageSrc: '' },
             { word: 'walk', chinese: '走路', image: '🚶', phonetic: '/wɔːk/', imageSrc: '' }
+        ]
+    },
+    weekdays: {
+        name: '星期',
+        icon: '📅',
+        words: [
+            { word: 'Monday', chinese: '星期一', image: '1️⃣', phonetic: '/ˈmʌndeɪ/', imageSrc: '' },
+            { word: 'Tuesday', chinese: '星期二', image: '2️⃣', phonetic: '/ˈtjuːzdeɪ/', imageSrc: '' },
+            { word: 'Wednesday', chinese: '星期三', image: '3️⃣', phonetic: '/ˈwenzdeɪ/', imageSrc: '' },
+            { word: 'Thursday', chinese: '星期四', image: '4️⃣', phonetic: '/ˈθɜːzdeɪ/', imageSrc: '' },
+            { word: 'Friday', chinese: '星期五', image: '5️⃣', phonetic: '/ˈfraɪdeɪ/', imageSrc: '' },
+            { word: 'Saturday', chinese: '星期六', image: '6️⃣', phonetic: '/ˈsætədeɪ/', imageSrc: '' },
+            { word: 'Sunday', chinese: '星期日', image: '7️⃣', phonetic: '/ˈsʌndeɪ/', imageSrc: '' },
+            { word: 'today', chinese: '今天', image: '📆', phonetic: '/təˈdeɪ/', imageSrc: '' },
+            { word: 'tomorrow', chinese: '明天', image: '➡️', phonetic: '/təˈmɒrəʊ/', imageSrc: '' },
+            { word: 'yesterday', chinese: '昨天', image: '⬅️', phonetic: '/ˈjestədeɪ/', imageSrc: '' },
+            { word: 'week', chinese: '周', image: '📅', phonetic: '/wiːk/', imageSrc: '' },
+            { word: 'month', chinese: '月', image: '🗓️', phonetic: '/mʌnθ/', imageSrc: '' }
+        ]
+    },
+    toys: {
+        name: '玩具',
+        icon: '🧸',
+        words: [
+            { word: 'ball', chinese: '球', image: '⚽', phonetic: '/bɔːl/', imageSrc: '' },
+            { word: 'doll', chinese: '娃娃', image: '🪆', phonetic: '/dɒl/', imageSrc: '' },
+            { word: 'kite', chinese: '风筝', image: '🪁', phonetic: '/kaɪt/', imageSrc: '' },
+            { word: 'robot', chinese: '机器人', image: '🤖', phonetic: '/ˈrəʊbɒt/', imageSrc: '' },
+            { word: 'puzzle', chinese: '拼图', image: '🧩', phonetic: '/ˈpʌzl/', imageSrc: '' },
+            { word: 'teddy bear', chinese: '泰迪熊', image: '🧸', phonetic: '/ˈtedi beə/', imageSrc: '' },
+            { word: 'balloon', chinese: '气球', image: '🎈', phonetic: '/bəˈluːn/', imageSrc: '' },
+            { word: 'toy car', chinese: '玩具车', image: '🚗', phonetic: '/tɔɪ kɑː/', imageSrc: '' },
+            { word: 'blocks', chinese: '积木', image: '🧱', phonetic: '/blɒks/', imageSrc: '' },
+            { word: 'drum', chinese: '鼓', image: '🥁', phonetic: '/drʌm/', imageSrc: '' }
+        ]
+    },
+    travel: {
+        name: '旅游',
+        icon: '✈️',
+        words: [
+            { word: 'hotel', chinese: '酒店', image: '🏨', phonetic: '/həʊˈtel/', imageSrc: '' },
+            { word: 'airport', chinese: '机场', image: '🛫', phonetic: '/ˈeəpɔːt/', imageSrc: '' },
+            { word: 'beach', chinese: '海滩', image: '🏖️', phonetic: '/biːtʃ/', imageSrc: '' },
+            { word: 'map', chinese: '地图', image: '🗺️', phonetic: '/mæp/', imageSrc: '' },
+            { word: 'ticket', chinese: '票', image: '🎫', phonetic: '/ˈtɪkɪt/', imageSrc: '' },
+            { word: 'camera', chinese: '相机', image: '📷', phonetic: '/ˈkæmərə/', imageSrc: '' },
+            { word: 'passport', chinese: '护照', image: '🛂', phonetic: '/ˈpɑːspɔːt/', imageSrc: '' },
+            { word: 'suitcase', chinese: '行李箱', image: '🧳', phonetic: '/ˈsuːtkeɪs/', imageSrc: '' },
+            { word: 'museum', chinese: '博物馆', image: '🏛️', phonetic: '/mjuˈziːəm/', imageSrc: '' },
+            { word: 'park', chinese: '公园', image: '🌳', phonetic: '/pɑːk/', imageSrc: '' },
+            { word: 'zoo', chinese: '动物园', image: '🦁', phonetic: '/zuː/', imageSrc: '' },
+            { word: 'restaurant', chinese: '餐厅', image: '🍽️', phonetic: '/ˈrestrɒnt/', imageSrc: '' }
+        ]
+    },
+    plants: {
+        name: '植物',
+        icon: '🌱',
+        words: [
+            { word: 'tree', chinese: '树', image: '🌳', phonetic: '/triː/', imageSrc: '' },
+            { word: 'flower', chinese: '花', image: '🌸', phonetic: '/ˈflaʊə/', imageSrc: '' },
+            { word: 'grass', chinese: '草', image: '🌱', phonetic: '/ɡrɑːs/', imageSrc: '' },
+            { word: 'leaf', chinese: '叶子', image: '🍃', phonetic: '/liːf/', imageSrc: '' },
+            { word: 'rose', chinese: '玫瑰', image: '🌹', phonetic: '/rəʊz/', imageSrc: '' },
+            { word: 'seed', chinese: '种子', image: '🌰', phonetic: '/siːd/', imageSrc: '' },
+            { word: 'root', chinese: '根', image: '🌿', phonetic: '/ruːt/', imageSrc: '' },
+            { word: 'mushroom', chinese: '蘑菇', image: '🍄', phonetic: '/ˈmʌʃruːm/', imageSrc: '' },
+            { word: 'bamboo', chinese: '竹子', image: '🎋', phonetic: '/bæmˈbuː/', imageSrc: '' },
+            { word: 'cactus', chinese: '仙人掌', image: '🌵', phonetic: '/ˈkæktəs/', imageSrc: '' },
+            { word: 'sunflower', chinese: '向日葵', image: '🌻', phonetic: '/ˈsʌnflaʊə/', imageSrc: '' },
+            { word: 'tulip', chinese: '郁金香', image: '🌷', phonetic: '/ˈtjuːlɪp/', imageSrc: '' }
+        ]
+    },
+    fruits: {
+        name: '水果',
+        icon: '🍎',
+        words: [
+            { word: 'apple', chinese: '苹果', image: '🍎', phonetic: '/ˈæpl/', imageSrc: '' },
+            { word: 'banana', chinese: '香蕉', image: '🍌', phonetic: '/bəˈnɑːnə/', imageSrc: '' },
+            { word: 'orange', chinese: '橙子', image: '🍊', phonetic: '/ˈɒrɪndʒ/', imageSrc: '' },
+            { word: 'grape', chinese: '葡萄', image: '🍇', phonetic: '/ɡreɪp/', imageSrc: '' },
+            { word: 'watermelon', chinese: '西瓜', image: '🍉', phonetic: '/ˈwɔːtəmelən/', imageSrc: '' },
+            { word: 'strawberry', chinese: '草莓', image: '🍓', phonetic: '/ˈstrɔːbəri/', imageSrc: '' },
+            { word: 'peach', chinese: '桃子', image: '🍑', phonetic: '/piːtʃ/', imageSrc: '' },
+            { word: 'pear', chinese: '梨', image: '🍐', phonetic: '/peə/', imageSrc: '' },
+            { word: 'cherry', chinese: '樱桃', image: '🍒', phonetic: '/ˈtʃeri/', imageSrc: '' },
+            { word: 'mango', chinese: '芒果', image: '🥭', phonetic: '/ˈmæŋɡəʊ/', imageSrc: '' },
+            { word: 'lemon', chinese: '柠檬', image: '🍋', phonetic: '/ˈlemən/', imageSrc: '' },
+            { word: 'pineapple', chinese: '菠萝', image: '🍍', phonetic: '/ˈpaɪnæpl/', imageSrc: '' }
         ]
     }
 };

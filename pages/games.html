@@ -362,6 +362,30 @@
                 <div class="read-feedback" id="readFeedback"></div>
                 <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
             </div>
+
+            <!-- 单词转盘游戏 -->
+            <div class="wheel-game" id="wheelGame" style="display:none;">
+                <div class="game-header">
+                    <h3>🎡 单词转盘</h3>
+                    <div class="wheel-game-score">分数: <span id="wheelScore">0</span></div>
+                </div>
+                <p style="color:var(--text-light);margin:10px 0;">转动转盘，说出指针指向的单词！</p>
+                <div style="position:relative;width:300px;height:300px;margin:20px auto;">
+                    <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:30px;z-index:2;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));">📍</div>
+                    <canvas id="gameWheelCanvas" width="300" height="300" style="width:300px;height:300px;"></canvas>
+                    <div onclick="spinGameWheel()" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;background:white;border:3px solid #667eea;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#667eea;font-size:14px;cursor:pointer;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.2);">GO</div>
+                </div>
+                <button class="tab-btn" id="gameSpinBtn" onclick="spinGameWheel()" style="margin:10px 0;padding:14px 40px;background:linear-gradient(135deg,#ff9a56,#ff6b6b);color:white;border:none;border-radius:25px;font-size:18px;font-weight:bold;cursor:pointer;">转一转！</button>
+                <div id="wheelWordResult" style="margin:15px auto;max-width:400px;min-height:120px;display:none;background:white;border-radius:15px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,0.1);text-align:center;">
+                    <div id="wheelWordEmoji" style="font-size:60px;"></div>
+                    <div id="wheelWordText" style="font-size:28px;font-weight:bold;color:var(--text-dark);margin:8px 0;"></div>
+                    <div id="wheelWordChinese" style="font-size:18px;color:var(--text-light);margin-bottom:10px;"></div>
+                    <button class="tab-btn" onclick="speakWheelWord()" style="padding:10px 25px;background:var(--primary-color);color:white;border:none;border-radius:20px;font-size:16px;cursor:pointer;">🔊 听发音</button>
+                    <div id="wheelWordOptions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:15px;"></div>
+                    <div id="wheelWordFeedback" style="font-size:18px;font-weight:bold;margin-top:10px;min-height:25px;"></div>
+                </div>
+                <button class="back-to-games tab-btn" onclick="showGamesList()">返回游戏列表</button>
+            </div>
         </main>
     </div>
 
@@ -383,6 +407,7 @@
             { name: '拼图单词', icon: '🧩', desc: '拖动字母拼单词', difficulty: 2, badge: null, id: 'puzzle' },
             { name: '听力选择', icon: '👂', desc: '听发音选单词', difficulty: 3, badge: null, id: 'listen' },
             { name: '单词消消乐', icon: '✨', desc: '匹配单词和图片', difficulty: 3, badge: 'NEW', id: 'match' },
+            { name: '单词转盘', icon: '🎡', desc: '转盘学单词赢星星', difficulty: 1, badge: 'NEW', id: 'wheel' },
             { name: '句子组合', icon: '📝', desc: '拖拽单词组句子', difficulty: 3, badge: 'HOT', id: 'sentence' },
             { name: '跟读练习', icon: '🎤', desc: '跟读练习评分', difficulty: 2, badge: null, id: 'read' },
             { name: '单词书', icon: '📖', desc: '查询所有单词', difficulty: 1, badge: 'NEW', id: 'wordbook' },
@@ -428,7 +453,7 @@
 
         function startGame(gameId) {
             document.getElementById('gamesList').style.display = 'none';
-            document.querySelectorAll('.balloon-game, .listen-game, .match-game, .puzzle-game, .read-game, .sentence-game').forEach(g => {
+            document.querySelectorAll('.balloon-game, .listen-game, .match-game, .puzzle-game, .read-game, .sentence-game, .wheel-game').forEach(g => {
                 g.style.display = 'none';
                 g.classList.remove('active');
             });
@@ -449,6 +474,10 @@
                 document.getElementById('matchGame').style.display = 'block';
                 document.getElementById('matchGame').classList.add('active');
                 initMatchGame();
+            } else if (gameId === 'wheel') {
+                document.getElementById('wheelGame').style.display = 'block';
+                document.getElementById('wheelGame').classList.add('active');
+                initWheelGame();
             } else if (gameId === 'wordbook') {
                 window.location.href = 'wordbook.html';
             } else if (gameId === 'tracing') {
@@ -466,7 +495,7 @@
 
         function showGamesList() {
             document.getElementById('gamesList').style.display = 'block';
-            document.querySelectorAll('.balloon-game, .puzzle-game, .listen-game, .match-game, .read-game, .sentence-game').forEach(g => {
+            document.querySelectorAll('.balloon-game, .puzzle-game, .listen-game, .match-game, .read-game, .sentence-game, .wheel-game').forEach(g => {
                 g.style.display = 'none';
                 g.classList.remove('active');
             });
@@ -898,16 +927,20 @@ function initBalloonGame() {
                 card.dataset.matchId = item.matchId;
                 card.dataset.type = item.type;
 
+                const inner = document.createElement('div');
+                inner.className = 'match-card-inner';
+
                 const front = document.createElement('div');
                 front.className = 'match-card-front';
                 front.textContent = '?';
 
                 const back = document.createElement('div');
                 back.className = 'match-card-back';
-                back.textContent = item.type === 'word' ? item.content : item.content;
+                back.textContent = item.content;
 
-                card.appendChild(front);
-                card.appendChild(back);
+                inner.appendChild(front);
+                inner.appendChild(back);
+                card.appendChild(inner);
 
                 card.onclick = () => flipMatchCard(card);
                 grid.appendChild(card);
@@ -1222,6 +1255,154 @@ function initBalloonGame() {
             });
 
             return matchCount / Math.max(words1.length, words2.length);
+        }
+
+        // ========= 单词转盘游戏 =========
+        let wheelGameScore = 0;
+        let wheelGameAngle = 0;
+        let wheelGameSpinning = false;
+        let wheelGameWords = [];
+        let wheelGameCurrent = null;
+        const wheelColors = ['#FF6B6B','#4ECDC4','#45B7D1','#96E6A1','#DDA0DD','#FFD93D','#FF9A56','#667eea'];
+
+        function initWheelGame() {
+            wheelGameScore = 0;
+            document.getElementById('wheelScore').textContent = 0;
+            document.getElementById('wheelWordResult').style.display = 'none';
+
+            const allWords = [];
+            Object.keys(wordCategories).forEach(cat => {
+                wordCategories[cat].words.forEach(w => allWords.push(w));
+            });
+            for (let i = allWords.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allWords[i], allWords[j]] = [allWords[j], allWords[i]];
+            }
+            wheelGameWords = allWords.slice(0, 8);
+            drawGameWheel();
+        }
+
+        function drawGameWheel() {
+            const canvas = document.getElementById('gameWheelCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const cx = 150, cy = 150, r = 140;
+            const n = wheelGameWords.length;
+            const arc = (Math.PI * 2) / n;
+            ctx.clearRect(0, 0, 300, 300);
+            for (let i = 0; i < n; i++) {
+                const angle = wheelGameAngle + arc * i;
+                ctx.beginPath(); ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, angle, angle + arc);
+                ctx.closePath();
+                ctx.fillStyle = wheelColors[i % wheelColors.length]; ctx.fill();
+                ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle + arc / 2);
+                ctx.fillStyle = 'white'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(wheelGameWords[i].image, r * 0.55, -6);
+                ctx.fillText(wheelGameWords[i].word, r * 0.55, 12);
+                ctx.restore();
+            }
+            ctx.beginPath(); ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+            ctx.fillStyle = 'white'; ctx.fill();
+        }
+
+        function spinGameWheel() {
+            if (wheelGameSpinning) return;
+            wheelGameSpinning = true;
+            document.getElementById('gameSpinBtn').disabled = true;
+            document.getElementById('wheelWordResult').style.display = 'none';
+
+            const n = wheelGameWords.length;
+            const arc = (Math.PI * 2) / n;
+            const targetIdx = Math.floor(Math.random() * n);
+            const spins = 5 + Math.random() * 3;
+            const targetAngle = -(targetIdx * arc + arc / 2) + Math.PI * 2 * spins;
+            const startAngle = wheelGameAngle;
+            let startTime = null;
+            const duration = 4000;
+
+            function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+            function animate(ts) {
+                if (!startTime) startTime = ts;
+                const progress = Math.min((ts - startTime) / duration, 1);
+                wheelGameAngle = startAngle + targetAngle * easeOut(progress);
+                drawGameWheel();
+                if (progress < 1) { requestAnimationFrame(animate); }
+                else {
+                    wheelGameSpinning = false;
+                    document.getElementById('gameSpinBtn').disabled = false;
+                    wheelGameCurrent = wheelGameWords[targetIdx];
+                    showWheelWordQuiz(targetIdx);
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function showWheelWordQuiz(idx) {
+            const w = wheelGameWords[idx];
+            const result = document.getElementById('wheelWordResult');
+            result.style.display = 'block';
+            document.getElementById('wheelWordEmoji').textContent = w.image;
+            document.getElementById('wheelWordText').textContent = w.word;
+            document.getElementById('wheelWordChinese').textContent = '';
+            document.getElementById('wheelWordFeedback').textContent = '';
+
+            if (window.audioManager) audioManager.speakWord(w.word);
+
+            const allWords = [];
+            Object.keys(wordCategories).forEach(cat => {
+                wordCategories[cat].words.forEach(x => { if (x.word !== w.word) allWords.push(x); });
+            });
+            for (let i = allWords.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allWords[i], allWords[j]] = [allWords[j], allWords[i]];
+            }
+            const opts = allWords.slice(0, 3).map(x => x.chinese);
+            opts.push(w.chinese);
+            for (let i = opts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [opts[i], opts[j]] = [opts[j], opts[i]];
+            }
+
+            const container = document.getElementById('wheelWordOptions');
+            container.innerHTML = '<p style="font-size:16px;color:var(--text-dark);width:100%;margin-bottom:5px;">选择正确的中文意思：</p>';
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.style.cssText = 'padding:10px 20px;border:2px solid #e0e0e0;border-radius:12px;background:white;font-size:16px;cursor:pointer;transition:all 0.3s;font-weight:bold;';
+                btn.textContent = opt;
+                btn.onclick = () => checkWheelAnswer(opt, w.chinese, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkWheelAnswer(selected, correct, btn) {
+            const btns = document.querySelectorAll('#wheelWordOptions button');
+            btns.forEach(b => { b.onclick = null; b.style.cursor = 'default'; });
+            const feedback = document.getElementById('wheelWordFeedback');
+
+            if (selected === correct) {
+                btn.style.background = '#43e97b'; btn.style.color = 'white'; btn.style.borderColor = '#43e97b';
+                feedback.textContent = '✅ 正确！+10分';
+                feedback.style.color = '#43e97b';
+                wheelGameScore += 10;
+                document.getElementById('wheelScore').textContent = wheelGameScore;
+                if (window.audioManager) audioManager.playSuccessSound();
+                if (window.storage) storage.addStars(3);
+                if (window.celebration) celebration.simpleSuccess(window.innerWidth/2, window.innerHeight/2);
+            } else {
+                btn.style.background = '#ff6b6b'; btn.style.color = 'white'; btn.style.borderColor = '#ff6b6b';
+                btns.forEach(b => { if (b.textContent === correct) { b.style.background = '#43e97b'; b.style.color = 'white'; b.style.borderColor = '#43e97b'; }});
+                feedback.textContent = '❌ 正确答案是：' + correct;
+                feedback.style.color = '#ff6b6b';
+                if (window.audioManager) audioManager.playErrorSound();
+            }
+            document.getElementById('wheelWordChinese').textContent = wheelGameCurrent.chinese;
+            updateStarDisplay();
+        }
+
+        function speakWheelWord() {
+            if (wheelGameCurrent && window.audioManager) audioManager.speakWord(wheelGameCurrent.word);
         }
 
         // 更新星星显示
